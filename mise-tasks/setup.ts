@@ -1,6 +1,7 @@
 #!/usr/bin/env -S vp exec tsx
 //MISE description="Generate per-workspace ports and .env.workspace.local"
 import { execFileSync } from 'node:child_process'
+import { randomBytes } from 'node:crypto'
 import { existsSync, readFileSync, realpathSync, writeFileSync } from 'node:fs'
 import { basename } from 'node:path'
 
@@ -409,6 +410,27 @@ function main(): void {
 	if (proxyUp) {
 		console.log(`  proxy:    https://${proxyHost}`)
 	}
+
+	seedDevLocalFile()
+}
+
+// Seeds the human-owned local file exactly once so a fresh clone runs before
+// Infisical is set up. Never rewrites an existing file; deleting the seeded
+// secret hands the value over to Infisical.
+function seedDevLocalFile(): void {
+	if (existsSync('.env.development.local')) return
+
+	writeFileSync(
+		'.env.development.local',
+		[
+			'# Local overrides; setup writes this file once and never touches it again.',
+			'# Delete the line below once BETTER_AUTH_SECRET is managed by Infisical.',
+			`BETTER_AUTH_SECRET="${randomBytes(32).toString('base64url')}"`,
+			'',
+		].join('\n'),
+	)
+
+	console.log('Seeded .env.development.local with a local BETTER_AUTH_SECRET.')
 }
 
 main()
