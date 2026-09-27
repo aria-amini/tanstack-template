@@ -24,7 +24,6 @@
 		"allowUnreachableCode": false,
 		"allowUnusedLabels": false,
 		"paths": {
-			"@config/*": ["./config/*"],
 			"@tests/*": ["./tests/*"],
 			"@/*": ["./src/*"]
 		}

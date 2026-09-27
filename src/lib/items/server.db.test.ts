@@ -1,4 +1,4 @@
-import { initDb, type Database } from '@config/test/db'
+import { initDb, type Database } from '@tests/support/db'
 import { describe, expect } from 'vite-plus/test'
 
 import { user } from '@/db/schema'
