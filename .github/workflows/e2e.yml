@@ -62,7 +62,7 @@ jobs:
       - name: setup vite+
         uses: voidzero-dev/setup-vp@v1
         with:
-          version: '0.2.1'
+          version: '0.3.3'
           node-version: '24'
       - name: Install Playwright Browsers
         run: vpx playwright install --with-deps --only-shell
@@ -88,10 +88,11 @@ jobs:
         run: vpx playwright test
       - name: Upload Playwright report
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-report
           path: |
             .playwright/report/
             .playwright/test-results/
+          include-hidden-files: true
           retention-days: 14

@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, test, vi } from 'vite-plus/test'
 
 type PantryItem = { id: string; name: string; userId: string; createdAt: Date }
 
-const itemsState = vi.hoisted((): { items: PantryItem[] } => ({
+const itemsState = vi.hoisted<{ items: PantryItem[] }>(() => ({
 	items: [],
 }))
 

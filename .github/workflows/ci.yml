@@ -23,7 +23,7 @@ jobs:
       - name: setup vite+
         uses: voidzero-dev/setup-vp@v1
         with:
-          version: '0.2.1'
+          version: '0.3.3'
           cache: true
       - run: vp check
       - run: vp test run --project unit
@@ -36,7 +36,7 @@ jobs:
       - name: setup vite+
         uses: voidzero-dev/setup-vp@v1
         with:
-          version: '0.2.1'
+          version: '0.3.3'
           cache: true
       - name: Run Tests
         run: vp test run --project server
@@ -49,7 +49,7 @@ jobs:
       - name: setup vite+
         uses: voidzero-dev/setup-vp@v1
         with:
-          version: '0.2.1'
+          version: '0.3.3'
           cache: true
       - name: Install Playwright Browsers
         run: vpx playwright install --with-deps --only-shell
@@ -57,11 +57,9 @@ jobs:
         run: vp test run --project browser
       - name: Upload screenshot diff report
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: visual-test-report
-          path: |
-            visual-diffs.html
-            html/
-            .vitest-attachments/
+          path: .vitest-attachments/
+          include-hidden-files: true
           retention-days: 14

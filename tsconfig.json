@@ -1,6 +1,6 @@
 {
 	"include": ["**/*.ts", "**/*.tsx"],
-	"exclude": [".output"],
+	"exclude": [".output", "tools/oxlint/anti-slop/**/*.test.ts"],
 	"compilerOptions": {
 		"target": "ES2022",
 		"jsx": "react-jsx",
@@ -23,6 +23,10 @@
 		"exactOptionalPropertyTypes": true,
 		"allowUnreachableCode": false,
 		"allowUnusedLabels": false,
-		"paths": { "@tests/*": ["./tests/*"], "@/*": ["./src/*"] }
+		"paths": {
+			"@config/*": ["./config/*"],
+			"@tests/*": ["./tests/*"],
+			"@/*": ["./src/*"]
+		}
 	}
 }

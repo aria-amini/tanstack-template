@@ -88,8 +88,6 @@ _exclude:
   - '{% if not sentry %}instrument.server.mjs{% endif %}'
   - '{% if not sentry %}src/instrument.client.ts{% endif %}'
   - '{% if not posthog %}src/lib/analytics/posthog.server.ts{% endif %}'
-  - '{% if not posthog %}src/lib/utils/proxy.ts{% endif %}'
-  - '{% if not posthog %}src/lib/utils/proxy.unit.test.ts{% endif %}'
   - '{% if not posthog %}src/routes/api/ingest.$.ts{% endif %}'
   - '{% if not google_auth %}src/components/google-auth-button.tsx{% endif %}'
   - '{% if not google_auth %}src/lib/auth/use-google-auth.ts{% endif %}'

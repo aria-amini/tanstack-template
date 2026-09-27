@@ -12,7 +12,9 @@ import {
 
 async function requireUserId() {
 	const session = await getCurrentSession()
+
 	if (!session) throw redirect({ href: '/auth/login' })
+
 	return session.user.id
 }
 

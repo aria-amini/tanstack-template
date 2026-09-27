@@ -11,13 +11,16 @@ export const Route = createFileRoute('/(app)/profile')({
 	beforeLoad: () => redirectUnauthenticatedUsers({ redirectTo: '/profile' }),
 	component: Profile,
 })
+
 function Profile() {
 	const session = authClient.useSession()
 	const navigate = useNavigate()
 	const [avatar, setAvatar] = useState<string>()
 	const user = session.data?.user
+
 	const upload = async (event: React.ChangeEvent<HTMLInputElement>) => {
 		const file = event.target.files?.[0]
+
 		if (!file || !user) return
 		const key = `avatars/${user.id}-${crypto.randomUUID()}`
 		const { url } = await getAvatarUploadUrl({ data: { key } })
@@ -29,6 +32,7 @@ function Profile() {
 		await authClient.updateUser({ image: key })
 		setAvatar(await getAvatarUrl({ data: { image: key } }))
 	}
+
 	return (
 		<main className="mx-auto min-h-dvh max-w-xl space-y-8 p-6">
 			<h1 className="text-4xl font-bold">Profile</h1>

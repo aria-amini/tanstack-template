@@ -1,5 +1,4 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router'
-import { motion } from 'framer-motion'
 import { useState } from 'react'
 
 import { Badge } from '@/components/ui/badge'
@@ -19,23 +18,26 @@ function Pantry() {
 	const items = Route.useLoaderData()
 	const router = useRouter()
 	const [name, setName] = useState('')
+
 	const add = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
+
 		if (!name.trim()) return
 		await createItem({ data: { name } })
 		setName('')
 		await router.invalidate()
 	}
+
 	return (
 		<main className="mx-auto min-h-dvh w-full max-w-2xl space-y-8 p-6">
 			<header>
-				<p className="text-muted-foreground text-sm tracking-[0.2em] uppercase">
+				<p className="text-muted-foreground text-sm tracking-widest uppercase">
 					Your kitchen
 				</p>
 				<h1 className="text-4xl font-bold">Pantry</h1>
 			</header>
 			<Card>
-				<CardContent className="pt-6">
+				<CardContent>
 					<form onSubmit={add} className="flex gap-3">
 						<Input
 							aria-label="Item name"
@@ -50,13 +52,12 @@ function Pantry() {
 			{items.length ? (
 				<div className="space-y-3">
 					{items.map((item) => (
-						<motion.div
+						<div
 							key={item.id}
-							initial={{ opacity: 0, x: -12 }}
-							animate={{ opacity: 1, x: 0 }}
+							className="animate-in fade-in slide-in-from-left-2"
 						>
 							<Card>
-								<CardContent className="flex items-center justify-between py-4">
+								<CardContent className="flex items-center justify-between">
 									<div className="flex items-center gap-3">
 										<Badge variant="secondary">Stocked</Badge>
 										<span>{item.name}</span>
@@ -73,7 +74,7 @@ function Pantry() {
 									</Button>
 								</CardContent>
 							</Card>
-						</motion.div>
+						</div>
 					))}
 				</div>
 			) : (

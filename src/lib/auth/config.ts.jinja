@@ -1,11 +1,11 @@
 import { drizzleAdapter } from '@better-auth/drizzle-adapter'
-import { betterAuth } from 'better-auth'
+import { betterAuth, type BetterAuthOptions } from 'better-auth'
 {% if google_auth -%}
 import { oAuthProxy } from 'better-auth/plugins'
 {% endif -%}
 import { tanstackStartCookies } from 'better-auth/tanstack-start'
 
-import { db } from '@/db/connection'
+import { createDb } from '@/db/connection'
 import { account, session, user, verification } from '@/db/schema'
 import { serverEnv as env } from '@/env.server'
 
@@ -22,7 +22,9 @@ export const allowedHosts = [
 ]
 
 export function getAuth() {
-	return betterAuth({
+	const db = createDb()
+
+	const options: BetterAuthOptions = {
 		appName: '{{ app_name }}',
 		baseURL: {
 			allowedHosts,
@@ -36,29 +38,39 @@ export function getAuth() {
 		}),
 		emailAndPassword: { enabled: true, autoSignIn: true },
 {%- if google_auth %}
-		...(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET
-			? {
-					socialProviders: {
-						google: {
-							clientId: env.GOOGLE_CLIENT_ID,
-							clientSecret: env.GOOGLE_CLIENT_SECRET,
-						},
-					},
-				}
-			: {}),
-		plugins: [
-			// Dev uses a shared "Desktop app" Google OAuth client, which accepts
-			// any loopback port without registration — so every app/workspace
-			// bounces through its own daemon (appOrigin is localhost:<port> in
-			// dev). In prod appOrigin is the real domain and the proxy no-ops.
-			oAuthProxy({
-				productionURL: appOrigin,
-				secret: env.OAUTH_PROXY_SECRET,
-			}),
-			tanstackStartCookies(),
-		],
+		plugins:
+			env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET
+				? [
+						// Dev uses a shared "Desktop app" Google OAuth client, which
+						// accepts any loopback port without registration — so every
+						// app/workspace bounces through its own daemon (appOrigin is
+						// localhost:<port> in dev). In prod appOrigin is the real
+						// domain and the proxy no-ops.
+						oAuthProxy({
+							productionURL: appOrigin,
+							secret: env.OAUTH_PROXY_SECRET,
+						}),
+						tanstackStartCookies(),
+					]
+				: [tanstackStartCookies()],
 {%- else %}
 		plugins: [tanstackStartCookies()],
 {%- endif %}
-	})
+	}
+{%- if google_auth %}
+
+	if (env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET) {
+		return betterAuth({
+			...options,
+			socialProviders: {
+				google: {
+					clientId: env.GOOGLE_CLIENT_ID,
+					clientSecret: env.GOOGLE_CLIENT_SECRET,
+				},
+			},
+		})
+	}
+{%- endif %}
+
+	return betterAuth(options)
 }

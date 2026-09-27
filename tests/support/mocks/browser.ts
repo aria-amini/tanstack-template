@@ -1,12 +1,18 @@
 import { vi } from 'vite-plus/test'
 
-type MockSession = unknown
+// The minimal session shape the UI reads; tests only model those fields.
+interface MockSession {
+	user: { id: string; name?: string; email?: string }
+	session: { id: string }
+}
 
-const authState = vi.hoisted<{ session: MockSession }>(() => ({
+const authState = vi.hoisted<{ session: MockSession | null }>(() => ({
 	session: null,
 }))
 
-export function setMockSession(session: MockSession) {
+export type { MockSession }
+
+export function setMockSession(session: MockSession | null) {
 	authState.session = session
 }
 
@@ -38,6 +44,7 @@ vi.mock('@/lib/auth/session', () => ({
 
 vi.mock('@/routes/__root', async () => {
 	const React = await import('react')
+
 	const { Outlet, createRootRouteWithContext } =
 		await import('@tanstack/react-router')
 

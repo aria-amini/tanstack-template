@@ -1,9 +1,5 @@
-import {
-	describe,
-	expect,
-	test,
-	type Database,
-} from '@tests/support/fixtures/db'
+import { initDb, type Database } from '@config/test/db'
+import { describe, expect } from 'vite-plus/test'
 
 import { user } from '@/db/schema'
 
@@ -12,6 +8,8 @@ import {
 	deleteItemForUser,
 	listItemsForUser,
 } from './repository'
+
+const test = initDb()
 
 async function seedUser(db: Database) {
 	const id = crypto.randomUUID()
@@ -22,6 +20,7 @@ async function seedUser(db: Database) {
 		createdAt: new Date(),
 		updatedAt: new Date(),
 	})
+
 	return id
 }
 
@@ -49,6 +48,7 @@ describe('pantry items', () => {
 		const userId = await seedUser(db)
 
 		const item = await createItemForUser(userId, 'Sea salt', db)
+
 		if (!item) throw new Error('expected created item')
 		await deleteItemForUser('user-2', item.id, db)
 

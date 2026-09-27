@@ -3,15 +3,17 @@ allowBuilds:
   '@sentry/cli': true
 {%- endif %}
   core-js: true
-  cpu-features: true
+  # cpu-features is an optional pg dependency; its native build aborts the
+  # process on aarch64 (unfixable symbol error), and pg runs fine without it.
+  cpu-features: false
   esbuild: true
   msw: true
   protobufjs: true
   ssh2: true
 catalog:
-  vite: npm:@voidzero-dev/vite-plus-core@0.2.1
-  vitest: 4.1.9
-  vite-plus: 0.2.1
+  vite: npm:@voidzero-dev/vite-plus-core@0.3.3
+  vitest: 4.1.11
+  vite-plus: 0.3.3
 overrides:
   vite: 'catalog:'
   vitest: 'catalog:'

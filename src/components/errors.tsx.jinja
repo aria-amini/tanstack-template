@@ -35,11 +35,9 @@ export function NotFoundComponent() {
 						get you back on track.
 					</p>
 					<div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-						<Button asChild>
-							<Link to="/">
-								<ArrowLeftIcon className="h-4 w-4" />
-								Back to Home
-							</Link>
+						<Button render={<Link to="/" />}>
+							<ArrowLeftIcon className="h-4 w-4" />
+							Back to Home
 						</Button>
 					</div>
 				</CardContent>
@@ -57,8 +55,7 @@ export function ServerErrorComponent({ {% if sentry %}error, {% endif %}reset }:
 	useEffect(() => {
 		Sentry.captureException(error)
 	}, [error])
-
-{%- endif %}
+{% endif %}
 	return (
 		<div className="flex flex-1 flex-col items-center justify-center px-6 py-24">
 			<Card className="mx-auto max-w-xl text-center">
@@ -77,11 +74,9 @@ export function ServerErrorComponent({ {% if sentry %}error, {% endif %}reset }:
 							<ArrowsClockwiseIcon className="h-4 w-4" />
 							Try Again
 						</Button>
-						<Button asChild variant="secondary">
-							<Link to="/">
-								<ArrowLeftIcon className="h-4 w-4" />
-								Back to Home
-							</Link>
+						<Button variant="secondary" render={<Link to="/" />}>
+							<ArrowLeftIcon className="h-4 w-4" />
+							Back to Home
 						</Button>
 					</div>
 				</CardContent>

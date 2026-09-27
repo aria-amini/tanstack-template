@@ -10,7 +10,9 @@ export type UseGoogleAuthOptions = {
 function sanitizeRedirect(candidate: string): string {
 	try {
 		const url = new URL(candidate, window.location.origin)
+
 		if (url.origin !== window.location.origin) return '/'
+
 		return url.pathname + url.search + url.hash
 	} catch {
 		return '/'
@@ -39,8 +41,7 @@ export function useGoogleAuth({ fallbackRedirect }: UseGoogleAuthOptions) {
 			window.location.assign(data?.url ?? safeRedirect)
 		} catch (error) {
 			if (
-				error &&
-				typeof error === 'object' &&
+				error instanceof Object &&
 				'code' in error &&
 				error.code === 'PROVIDER_NOT_FOUND'
 			) {

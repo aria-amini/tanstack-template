@@ -1,12 +1,13 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
-@import 'shadcn/tailwind.css';
 @import '@fontsource-variable/oxanium';
 @import '@fontsource-variable/jetbrains-mono';
 
 @custom-variant dark (&:is(.dark *));
 
 :root {
+	color-scheme: light dark;
+
 	--radius: 0.625rem;
 
 	--background: oklch(1 0 0);
@@ -70,7 +71,13 @@
 	--shadow-2xl: 0 32px 92px -28px oklch(0.21 0.006 285.885 / 0.3);
 }
 
+.light {
+	color-scheme: light;
+}
+
 .dark {
+	color-scheme: dark;
+
 	--background: oklch(0.141 0.005 285.823);
 	--foreground: oklch(0.985 0 0);
 	--card: oklch(0.21 0.006 285.885);
@@ -152,6 +159,14 @@
 	--text-xs: 0.8125rem;
 	--text-xs--line-height: 1.4;
 
+	--text-2xs: 11px;
+	--text-3xs: 10px;
+	--text-4xs: 9px;
+	--text-5xs: 8px;
+	--leading-display: 1.05;
+	--animate-pending-slide: pending-slide 1.2s ease-in-out infinite;
+	--spacing: 0.25rem;
+
 	--font-sans: 'Oxanium Variable', sans-serif;
 	--font-heading: var(--font-sans);
 	--font-serif: georgia, cambria, 'Times New Roman', times, serif;
@@ -204,5 +219,14 @@
 		font-weight: 600;
 		letter-spacing: -0.025em;
 		line-height: 1.15;
+	}
+}
+
+@keyframes pending-slide {
+	from {
+		transform: translateX(-100%);
+	}
+	to {
+		transform: translateX(500%);
 	}
 }

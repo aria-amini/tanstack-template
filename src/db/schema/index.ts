@@ -2,6 +2,7 @@ import { foreignKey, index, text, timestamp } from 'drizzle-orm/pg-core'
 import { pgTable } from 'drizzle-orm/pg-core'
 
 export * from './auth'
+
 import { user } from './auth'
 
 export const items = pgTable(
