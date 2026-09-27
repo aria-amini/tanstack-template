@@ -1,5 +1,5 @@
 #!/usr/bin/env -S vp exec tsx
-//MISE description="Generate per-workspace ports and .env.development.local"
+//MISE description="Generate per-workspace ports and .env.workspace.local"
 import { execFileSync } from 'node:child_process'
 import { existsSync, readFileSync, realpathSync, writeFileSync } from 'node:fs'
 import { basename } from 'node:path'
@@ -313,14 +313,14 @@ function registerProxySlug(mainRoot: string): string {
 	return slug
 }
 
-// Ports are stable once assigned: only regenerate when the env file is
-// absent or belongs to another worktree (wt copy-ignored clones the default
-// workspace's file into new workspaces, which must not keep its ports —
-// and re-running setup here must not move this workspace's existing
-// database or registered OAuth redirect URIs out from under it).
-// A foreign file is fully rewritten so the canonical key order is restored.
+// Ports are stable once assigned: only regenerate when the workspace file
+// is absent or belongs to another worktree, whose cloned copy must not keep
+// this workspace's ports. Re-running setup must not move this workspace's
+// existing database or registered OAuth redirect URIs out from under it.
+// The whole file is owned by setup and fully rewritten when foreign; human
+// values live in .env.development.local, which setup never touches.
 function existingPorts(worktree: string): Record<string, string> {
-	const entries = readEnvFile('.env.development.local')
+	const entries = readEnvFile('.env.workspace.local')
 
 	if (entries['WORKTREE_NAME'] !== worktree) return {}
 
@@ -336,8 +336,8 @@ function main(): void {
 	const existing = existingPorts(worktree)
 
 	const isForeign =
-		existsSync('.env.development.local') &&
-		readEnvFile('.env.development.local')['WORKTREE_NAME'] !== worktree
+		existsSync('.env.workspace.local') &&
+		readEnvFile('.env.workspace.local')['WORKTREE_NAME'] !== worktree
 
 	const database = existing['POSTGRES_DB'] ?? sanitizeDatabaseName(branch)
 	const appPort = Number(existing['APP_PORT']) || hashPort(branch)
@@ -365,7 +365,7 @@ function main(): void {
 	const proxyUp = pitchforkAvailable()
 
 	updateEnvFile(
-		'.env.development.local',
+		'.env.workspace.local',
 		[
 			{
 				APP_PORT: String(appPort),
@@ -401,7 +401,7 @@ function main(): void {
 
 	setDaemonPort(appPort)
 
-	console.log(`Generated .env.development.local for ${branch}:`)
+	console.log(`Generated .env.workspace.local for ${branch}:`)
 	console.log(`  app:      http://localhost:${appPort}`)
 	console.log(`  postgres: localhost:${postgresPort}/${database}`)
 	console.log(`  minio:    http://localhost:${minioPort}`)
