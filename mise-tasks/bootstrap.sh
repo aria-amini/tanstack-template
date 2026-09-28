@@ -89,9 +89,9 @@ run_task "Applying database migrations" vp run db:migrate
 section "Finish"
 base_url="$(sed -n 's/^BASE_URL="\{0,1\}\([^"]*\)"\{0,1\}$/\1/p' .env.workspace.local 2>/dev/null)"
 base_url="${base_url:-$(sed -n 's/^BASE_URL="\{0,1\}\([^"]*\)"\{0,1\}$/\1/p' .env.development.local 2>/dev/null)}"
-base_url="${base_url:-set BASE_URL with: mise run setup}"
-
-gum style \
-	--border rounded --border-foreground 82 --padding "0 3" --margin "1 0" \
-	"$(gum style --bold --foreground 82 '✓ Bootstrap complete')" \
-	"$(gum style --foreground 39 "$base_url")"
+finish_args=(
+	--border rounded --border-foreground 82 --padding "0 3" --margin "1 0"
+	"$(gum style --bold --foreground 82 '✓ Bootstrap complete')"
+)
+[[ -n "$base_url" ]] && finish_args+=("$(gum style --foreground 39 "$base_url")")
+gum style "${finish_args[@]}"
