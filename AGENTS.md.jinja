@@ -26,8 +26,8 @@ Product analytics run through PostHog behind a `/api/ingest` proxy.
 ## Local URLs
 
 Caddy terminates TLS on the Tailscale IP at port 443 with publicly trusted
-wildcard certificates, then proxies to the Pitchfork proxy on loopback port
-9443. App URLs are portless: `https://<slug>.lvh.ariaamini.com`, aliased as
+wildcard certificates, then proxies to the Pitchfork proxy on loopback
+port 9443. App URLs are portless: `https://<slug>.lvh.ariaamini.com`, aliased as
 `https://<slug>.dev.ariaamini.com`. Hostnames are single-level. Slugs flatten
 the root directory name (`app.worktree` serves as `app-worktree`). Nested
 hostnames (`worktree.app.lvh…`) and direct `:9443` access do not work: the
