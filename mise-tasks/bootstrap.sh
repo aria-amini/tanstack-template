@@ -87,7 +87,8 @@ run_task "Applying database migrations" vp run db:migrate
 
 # Finish
 section "Finish"
-base_url="$(sed -n 's/^BASE_URL="\{0,1\}\([^"]*\)"\{0,1\}$/\1/p' .env.development.local)"
+base_url="$(sed -n 's/^BASE_URL="\{0,1\}\([^"]*\)"\{0,1\}$/\1/p' .env.workspace.local 2>/dev/null)"
+base_url="${base_url:-$(sed -n 's/^BASE_URL="\{0,1\}\([^"]*\)"\{0,1\}$/\1/p' .env.development.local 2>/dev/null)}"
 base_url="${base_url:-set BASE_URL with: mise run setup}"
 
 gum style \
