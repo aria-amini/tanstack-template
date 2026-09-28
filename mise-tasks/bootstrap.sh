@@ -73,10 +73,15 @@ run_task "Generating ports and proxy URL" mise run setup
 # Services
 section "Services"
 run_task "Cleaning up orphaned stacks" mise run gc
-# varlock may prompt for the machine secret, so it never runs inside a spinner
-task "Loading environment"
-vp exec varlock load
-complete_task "Loading environment"
+# varlock prompts for the machine secret on fresh clones, so it only runs
+# inside a spinner when no prompt is pending
+if grep -q 'varlock(prompt)' .env.local 2>/dev/null; then
+	task "Loading environment"
+	vp exec varlock load
+	complete_task "Loading environment"
+else
+	run_task "Loading environment" vp exec varlock load
+fi
 run_task "Starting Docker services" vp run compose:up
 run_task "Applying database migrations" vp run db:migrate
 
