@@ -1,4 +1,4 @@
-# TanStack application template
+# dota-visualizer
 
 Full-stack TanStack Start app: React 19, Vite+, Drizzle, Postgres, Better
 Auth, Tailwind v4, shadcn, Varlock. Docker Compose runs Postgres and MinIO.

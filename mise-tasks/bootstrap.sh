@@ -30,32 +30,20 @@ gum style \
 	"$(gum style --bold --foreground 212 "$app_name")" \
 	"workspace bootstrap"
 
-section_total=4
-section_current=0
-current_section="bootstrap"
-trap 'gum style --foreground 196 --bold "✗ Failed during: $current_section (exit $?)" >&2' ERR
-section() {
-	section_current=$((section_current + 1))
-	current_section="$1"
-	gum style --margin "1 0 0 0" --bold --foreground 99 "▸ [$section_current/$section_total] $1"
-}
-task() {
-	gum style --bold --foreground 245 "  $1"
-}
-complete_task() {
-	gum style --foreground 82 "  ✓ $1"
-}
-run_task() {
+trap 'gum style --foreground 196 --bold "✗ Bootstrap failed (exit $?)" >&2' ERR
+
+step() {
 	local title="$1"
 	shift
 	if [[ "$verbose" == true ]]; then
-		task "$title"
+		echo "  $title"
 		"$@"
 	else
 		gum spin --show-error --title "  $title..." -- "$@"
 	fi
-	complete_task "$title"
+	gum style --foreground 82 "  ✓ $title"
 }
+
 verify_app() {
 	local url="$1"
 	local attempts=30
@@ -69,39 +57,33 @@ verify_app() {
 	return 1
 }
 
-# Dependencies
-section "Dependencies"
-run_task "Install tools (mise i)" mise install
-run_task "Install packages (vp i)" vp i
+step "Install tools (mise i)" mise install
+step "Install packages (vp i)" vp i
+step "Generate .env.workspace.local" mise run setup
+step "Remove orphaned compose stacks" mise run gc
 
-# Workspace
-section "Workspace"
-run_task "Generating ports and proxy URL" mise run setup
+# Agent-safe mode redacts values and fails fast instead of waiting at an
+# interactive prompt, which a stale varlock(prompt) placeholder would trigger
+step "Validate env with varlock" vp exec varlock load --agent --format pretty
 
-# Services
-section "Services"
-run_task "Cleaning up orphaned stacks" mise run gc
-run_task "Loading environment" vp exec varlock load
-run_task "Starting Docker services" vp run compose:up
-run_task "Applying database migrations" vp run db:migrate
+step "Start Docker services" vp run compose:up
+step "Apply database migrations" vp run db:migrate
 
-# Finish
-section "Finish"
 base_url="$(sed -n 's/^BASE_URL="\{0,1\}\([^"]*\)"\{0,1\}$/\1/p' .env.workspace.local 2>/dev/null)"
 base_url="${base_url:-$(sed -n 's/^BASE_URL="\{0,1\}\([^"]*\)"\{0,1\}$/\1/p' .env.development.local 2>/dev/null)}"
 
 # Headless workspaces (herdr panes, CI) never trigger pitchfork's cd hook,
 # so the daemon must be started explicitly.
 if [[ -f pitchfork.toml ]] && command -v pitchfork &> /dev/null; then
-	run_task "Starting dev daemon" pitchfork start dev
+	step "Start dev daemon" pitchfork start dev
 fi
 
 # Bootstrap only succeeds when the URL a human will open actually answers.
 # Called directly: gum spin can only exec external commands, not functions.
 if [[ -n "$base_url" ]]; then
-	task "Verify app responds"
+	echo "  Verify app responds..."
 	verify_app "$base_url"
-	complete_task "Verify app responds"
+	gum style --foreground 82 "  ✓ Verify app responds"
 fi
 
 finish_args=(
