@@ -56,11 +56,23 @@ run_task() {
 	fi
 	complete_task "$title"
 }
+verify_app() {
+	local url="$1"
+	local attempts=30
+	for ((i = 1; i <= attempts; i++)); do
+		if curl -skf -o /dev/null "$url"; then
+			return 0
+		fi
+		sleep 1
+	done
+	gum style --foreground 196 "App did not answer at $url after ${attempts}s" >&2
+	return 1
+}
 
 # Dependencies
 section "Dependencies"
-run_task "Installing tools" mise install
-run_task "Installing packages" vp i
+run_task "Install tools (mise i)" mise install
+run_task "Install packages (vp i)" vp i
 
 # Workspace
 section "Workspace"
@@ -77,6 +89,21 @@ run_task "Applying database migrations" vp run db:migrate
 section "Finish"
 base_url="$(sed -n 's/^BASE_URL="\{0,1\}\([^"]*\)"\{0,1\}$/\1/p' .env.workspace.local 2>/dev/null)"
 base_url="${base_url:-$(sed -n 's/^BASE_URL="\{0,1\}\([^"]*\)"\{0,1\}$/\1/p' .env.development.local 2>/dev/null)}"
+
+# Headless workspaces (herdr panes, CI) never trigger pitchfork's cd hook,
+# so the daemon must be started explicitly.
+if [[ -f pitchfork.toml ]] && command -v pitchfork &> /dev/null; then
+	run_task "Starting dev daemon" pitchfork start dev
+fi
+
+# Bootstrap only succeeds when the URL a human will open actually answers.
+# Called directly: gum spin can only exec external commands, not functions.
+if [[ -n "$base_url" ]]; then
+	task "Verify app responds"
+	verify_app "$base_url"
+	complete_task "Verify app responds"
+fi
+
 finish_args=(
 	--border rounded --border-foreground 82 --padding "0 3" --margin "1 0"
 	"$(gum style --bold --foreground 82 '✓ Bootstrap complete')"

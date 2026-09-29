@@ -303,15 +303,28 @@ function registerProxySlug(mainRoot: string): string {
 	const slug = slugify(basename(mainRoot))
 
 	if (realpathSync('.') === mainRoot) {
-		try {
-			pitchfork(['settings', 'set', 'proxy.enable', 'true', '--global'])
-			pitchfork(['proxy', 'add', slug, '--daemon', 'dev', '--dir', mainRoot])
-		} catch {
-			// pitchfork unavailable — skip registration
-		}
+		registerSlug(slug, mainRoot)
 	}
 
 	return slug
+}
+
+// Worktree URLs must be single-level: the TLS edge serves a wildcard cert
+// covering only *.<tld>, so pitchfork's nested <workspace>.<slug>.<tld>
+// hostnames fail the TLS handshake behind it. Flattening to <slug>-<workspace>
+// keeps one label under the wildcard. Registered against this workspace's
+// directory so the proxy routes the slug to its own daemon.
+function registerWorktreeSlug(slug: string): void {
+	registerSlug(slug, realpathSync('.'))
+}
+
+function registerSlug(slug: string, dir: string): void {
+	try {
+		pitchfork(['settings', 'set', 'proxy.enable', 'true', '--global'])
+		pitchfork(['proxy', 'add', slug, '--daemon', 'dev', '--dir', dir])
+	} catch {
+		// pitchfork unavailable — skip registration
+	}
 }
 
 // Ports are stable once assigned: only regenerate when the workspace file
@@ -360,11 +373,18 @@ function main(): void {
 	const tld = proxyTld()
 	const proxySlug = registerProxySlug(mainRoot)
 	const worktreeLabel = slugify(worktree)
+	const isRoot = realpathSync('.') === mainRoot
 
-	const proxyHost =
-		worktreeLabel === proxySlug
-			? `${proxySlug}.${tld}`
-			: `${worktreeLabel}.${proxySlug}.${tld}`
+	const slug =
+		isRoot || worktreeLabel === proxySlug
+			? proxySlug
+			: slugify(`${proxySlug}-${worktreeLabel}`)
+
+	if (!isRoot && slug !== proxySlug) {
+		registerWorktreeSlug(slug)
+	}
+
+	const proxyHost = `${slug}.${tld}`
 
 	const proxyUp = pitchforkAvailable()
 
