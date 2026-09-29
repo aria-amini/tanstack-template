@@ -7,21 +7,6 @@ pitchfork daemon (see `pitchfork.toml`) that auto-starts/stops when entering or
 leaving the directory; each jj workspace gets unique ports via
 `mise-tasks/setup` (run by `mise run bootstrap`; re-run anytime with
 `mise run setup`).
-{%- if google_auth %}
-
-Google sign-in uses one shared dev OAuth client (type "Desktop app", so any
-loopback port works) hardcoded in `.env.development`. Deployed environments get
-dedicated credentials via `.env.preview` / `.env.production`, resolving secrets
-from Infisical.
-{%- endif %}
-{%- if sentry %}
-
-Error monitoring is wired through Sentry (`@sentry/tanstackstart-react`).
-{%- endif %}
-{%- if posthog %}
-
-Product analytics run through PostHog behind a `/api/ingest` proxy.
-{%- endif %}
 
 ## Local URLs
 

@@ -1,9 +1,6 @@
 import { resolve } from 'node:path'
 
 import babel from '@rolldown/plugin-babel'
-{% if sentry -%}
-import { sentryTanstackStart } from '@sentry/tanstackstart-react/vite'
-{% endif -%}
 import tailwindcss from '@tailwindcss/vite'
 import { devtools } from '@tanstack/devtools-vite'
 import { tanstackStart } from '@tanstack/react-start/plugin/vite'
@@ -225,15 +222,6 @@ export default defineConfig({
 		viteReact(),
 		babel({ presets: [reactCompilerPreset()] }),
 		varlockVitePlugin({ ssrInjectMode: 'resolved-env' }),
-{%- if sentry %}
-		sentryTanstackStart({
-			org: '{{ sentry_org }}',
-			project: '{{ sentry_project }}',
-			authToken: process.env.SENTRY_AUTH_TOKEN ?? '',
-			telemetry: Boolean(process.env.SENTRY_AUTH_TOKEN),
-			silent: !process.env.CI,
-		}),
-{%- endif %}
 	],
 	fmt,
 	lint,

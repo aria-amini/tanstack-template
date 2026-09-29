@@ -3,7 +3,7 @@ services:
     image: postgres:17-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-{{ app_name_snake }}_dev}
+      POSTGRES_DB: ${POSTGRES_DB:-dota_visualizer_dev}
       POSTGRES_USER: ${POSTGRES_USER:-app_user}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-app_dev}
     ports:

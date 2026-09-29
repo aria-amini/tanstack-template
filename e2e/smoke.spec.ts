@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test'
 
 test('landing page renders', async ({ page }) => {
 	await page.goto('/')
-	await expect(page.getByText('{{ app_name }}', { exact: true })).toBeVisible()
+	await expect(page.getByText('dota-visualizer', { exact: true })).toBeVisible()
 	await page.goto('/auth/login')
 	await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible()
 })

@@ -2,9 +2,6 @@ import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
-{% if google_auth -%}
-import { GoogleAuthButton } from '@/components/google-auth-button'
-{% endif -%}
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -37,9 +34,6 @@ function Signup() {
 				<CardContent>
 					<div className="space-y-6">
 						<h1 className="text-3xl font-bold">Create account</h1>
-{%- if google_auth %}
-						<GoogleAuthButton fallbackRedirect="/pantry" className="w-full" />
-{%- endif %}
 						<form onSubmit={submit} className="space-y-4">
 							<Input
 								required

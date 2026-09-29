@@ -1,7 +1,3 @@
-{% if sentry -%}
-// Sentry initialization must run before any other app code
-import './instrument.client'
-{% endif -%}
 import { StartClient } from '@tanstack/react-start/client'
 import { StrictMode, startTransition } from 'react'
 import { hydrateRoot } from 'react-dom/client'

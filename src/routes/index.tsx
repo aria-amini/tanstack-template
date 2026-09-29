@@ -12,7 +12,7 @@ function LandingPage() {
 				<p className="text-muted-foreground text-sm tracking-widest uppercase">
 					A TanStack Start app
 				</p>
-				<h1 className="text-6xl font-bold tracking-tight">{{ app_name }}</h1>
+				<h1 className="text-6xl font-bold tracking-tight">dota-visualizer</h1>
 				<p className="text-muted-foreground text-lg">
 					Full-stack React 19 with typed routing, server functions, and Drizzle
 					on Postgres.

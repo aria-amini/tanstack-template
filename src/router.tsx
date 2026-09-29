@@ -1,6 +1,3 @@
-{% if sentry -%}
-import * as Sentry from '@sentry/tanstackstart-react'
-{% endif -%}
 import {
 	type DehydratedState,
 	QueryClientProvider,
@@ -68,14 +65,6 @@ export const getRouter = () => {
 			hydrate(queryClient, dehydrated)
 		},
 	})
-{%- if sentry %}
-
-	if (!router.isServer) {
-		Sentry.addIntegration(
-			Sentry.tanstackRouterBrowserTracingIntegration(router),
-		)
-	}
-{%- endif %}
 
 	return router
 }

@@ -4,14 +4,8 @@ import {
 	CompassIcon,
 	WarningIcon,
 } from '@phosphor-icons/react'
-{% if sentry -%}
-import * as Sentry from '@sentry/tanstackstart-react'
-{% endif -%}
 import type { ErrorComponentProps } from '@tanstack/react-router'
 import { Link } from '@tanstack/react-router'
-{%- if sentry %}
-import { useEffect } from 'react'
-{%- endif %}
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -50,12 +44,7 @@ export function NotFoundComponent() {
 // * Server Error
 // ========================================================================
 
-export function ServerErrorComponent({ {% if sentry %}error, {% endif %}reset }: ErrorComponentProps) {
-{%- if sentry %}
-	useEffect(() => {
-		Sentry.captureException(error)
-	}, [error])
-{% endif %}
+export function ServerErrorComponent({ reset }: ErrorComponentProps) {
 	return (
 		<div className="flex flex-1 flex-col items-center justify-center px-6 py-24">
 			<Card className="mx-auto max-w-xl text-center">

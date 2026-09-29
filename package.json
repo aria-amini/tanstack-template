@@ -1,5 +1,5 @@
 {
-	"name": "{{ app_name }}",
+	"name": "dota-visualizer",
 	"version": "0.0.1",
 	"private": true,
 	"type": "module",
@@ -8,15 +8,9 @@
 	],
 	"scripts": {
 		"dev": "vp dev",
-{%- if sentry %}
-		"build": "vp build && cp instrument.server.mjs .output/server",
-		"preview": "vp preview",
-		"start": "varlock run -- node --import ./.output/server/instrument.server.mjs .output/server/index.mjs",
-{%- else %}
 		"build": "vp build",
 		"preview": "vp preview",
 		"start": "varlock run -- node .output/server/index.mjs",
-{%- endif %}
 		"check": "vp check",
 		"test": "vp test run --passWithNoTests",
 		"test:unit": "vp test run --project unit --passWithNoTests",
@@ -46,13 +40,7 @@
 		"@fontsource-variable/oxanium": "^5.2.8",
 		"@fontsource-variable/jetbrains-mono": "^5.2.8",
 		"@phosphor-icons/react": "^2.1.10",
-{%- if posthog %}
-		"@posthog/react": "^1.10.3",
-{%- endif %}
 		"@rolldown/plugin-babel": "^0.2.3",
-{%- if sentry %}
-		"@sentry/tanstackstart-react": "^10.69.0",
-{%- endif %}
 		"@tanstack/react-query": "5.101.0",
 		"@tanstack/react-router": "1.170.18",
 		"@tanstack/react-router-devtools": "1.167.0",
@@ -67,10 +55,6 @@
 		"drizzle-orm": "1.0.0-rc.4",
 		"nitro": "3.0.260610-beta",
 		"pg": "^8.22.0",
-{%- if posthog %}
-		"posthog-js": "^1.391.2",
-		"posthog-node": "^5.49.0",
-{%- endif %}
 		"react": "^19.2.7",
 		"react-dom": "^19.2.7",
 		"recharts": "3.8.0",

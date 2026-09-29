@@ -7,35 +7,12 @@ import {
 	Scripts,
 	createRootRouteWithContext,
 } from '@tanstack/react-router'
-{%- if posthog %}
-import posthog from 'posthog-js'
-{%- endif %}
-import { {% if posthog %}useEffect, {% endif %}type ReactNode } from 'react'
+import { type ReactNode } from 'react'
 
 import { ThemeProvider, ThemeSwitch } from '@/components/theme-switch'
 import { createThemeBootstrapScript, getThemePreference } from '@/lib/theme'
 
 import '../styles.css'
-{%- if posthog %}
-
-function Analytics() {
-	useEffect(() => {
-		const posthogKey = import.meta.env.VITE_PUBLIC_POSTHOG_KEY
-
-		if (import.meta.env.MODE === 'development' || !posthogKey) return
-
-		posthog.init(posthogKey, {
-			api_host: '/api/ingest',
-			ui_host: 'https://us.posthog.com',
-			defaults: '2025-11-30',
-			person_profiles: 'always',
-			capture_exceptions: true,
-		})
-	}, [])
-
-	return null
-}
-{%- endif %}
 
 export const Route = createRootRouteWithContext<{
 	queryClient: QueryClient
@@ -48,7 +25,7 @@ export const Route = createRootRouteWithContext<{
 				name: 'viewport',
 				content: 'width=device-width, initial-scale=1, viewport-fit=cover',
 			},
-			{ title: '{{ app_name }}' },
+			{ title: 'dota-visualizer' },
 		],
 	}),
 	component: RootComponent,
@@ -83,11 +60,6 @@ function RootComponent() {
 					<ThemeSwitch />
 				</div>
 			</ClientOnly>
-{%- if posthog %}
-			<ClientOnly fallback={null}>
-				<Analytics />
-			</ClientOnly>
-{%- endif %}
 		</>
 	)
 }
