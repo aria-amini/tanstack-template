@@ -215,9 +215,6 @@ importers:
       '@tanstack/router-plugin':
         specifier: 1.168.18
         version: 1.168.18(@tanstack/react-router@1.170.18(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(@voidzero-dev/vite-plus-core@0.3.3(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(typescript@6.0.3)(yaml@2.9.1))(esbuild@0.28.2)(rolldown@1.2.11)
-      '@varlock/infisical-plugin':
-        specifier: ^2.1.0
-        version: 2.1.2(varlock@1.21.0)
       '@vitejs/plugin-react':
         specifier: ^6.0.2
         version: 6.1.1(@rolldown/plugin-babel@0.2.4(@babel/core@7.29.7)(@babel/runtime@7.29.7)(@voidzero-dev/vite-plus-core@0.3.3(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(typescript@6.0.3)(yaml@2.9.1))(rolldown@1.2.11))(@voidzero-dev/vite-plus-core@0.3.3(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(typescript@6.0.3)(yaml@2.9.1))(babel-plugin-react-compiler@1.0.0)
@@ -2423,12 +2420,6 @@ packages:
     engines: {node: '>=16.20.0'}
     cpu: [x64]
     os: [win32]
-
-  '@varlock/infisical-plugin@2.1.2':
-    resolution: {integrity: sha512-S5+WBUgpV8ff8ZHQ1GrFepdfbzPhT/o5EVQEajiMchNb8eQntl6ycnUjokr1HRPR5SGd8NUGB0Xmu/Ooj3/Zwg==}
-    engines: {node: '>=22'}
-    peerDependencies:
-      varlock: ^1.21.0
 
   '@varlock/native-helper-darwin@1.21.0':
     resolution: {integrity: sha512-rPjYt5vrcGuKx5YblF1y8xLDChN8YTjgllzslkB4CJRXEjGAPye2r76FZH6bppLV1KCbU+TcIOWrWX/2+OhASw==}
@@ -7265,10 +7256,6 @@ snapshots:
 
   '@typescript/typescript-win32-x64@7.0.2':
     optional: true
-
-  '@varlock/infisical-plugin@2.1.2(varlock@1.21.0)':
-    dependencies:
-      varlock: 1.21.0
 
   '@varlock/native-helper-darwin@1.21.0':
     optional: true

@@ -417,7 +417,7 @@ function main(): void {
 	seedDevLocalFile()
 }
 
-// Seeds the human-owned local file so a fresh clone runs before Infisical is
+// Seeds the human-owned local file so a fresh clone runs before secrets are
 // set up. Skips files that already hold values; an empty file counts as
 // unseeded, so a truncation accident self-heals on the next setup run.
 function seedDevLocalFile(): void {
