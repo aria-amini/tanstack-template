@@ -21,6 +21,12 @@ wildcard certificate covers one level, and the proxy binds loopback only.
 worktree slug by hand:
 `pitchfork proxy add <slug> --daemon dev --dir <workspace-root>`.
 
+The Caddy TLS edge is the global pitchfork daemon `tls`, registered in
+`~/.config/pitchfork/config.toml` with `boot_start`; it reads `CF_API_TOKEN`
+through varlock (`~/.config/caddy-lab/`). Never run `pitchfork proxy setup`
+here — it would grab port 443 from Caddy. After bootstrap, `mise run doctor`
+verifies the whole chain: proxy edge, env graph, app response.
+
 ## Commands
 
 - `vp dev` — start development (usually managed by pitchfork instead)

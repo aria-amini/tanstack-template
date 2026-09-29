@@ -13,7 +13,6 @@ export type CoercedEnvSchema = {
   
   /**
    * **RAILWAY_ENVIRONMENT_NAME**  
-   * Set automatically by Railway and used to detect preview deployments.  
    * ![icon](data:image/svg+xml;utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2032%2032%22%3E%3Cpath%20fill%3D%22%23808080%22%20d%3D%22M29%2022h-5a2.003%202.003%200%200%201-2-2v-6a2%202%200%200%201%202-2h5v2h-5v6h5ZM18%2012h-4V8h-2v14h6a2.003%202.003%200%200%200%202-2v-6a2%202%200%200%200-2-2m-4%208v-6h4v6Zm-6-8H3v2h5v2H4a2%202%200%200%200-2%202v2a2%202%200%200%200%202%202h6v-8a2%202%200%200%200-2-2m0%208H4v-2h4Z%22%2F%3E%3C%2Fsvg%3E)   
    */
   RAILWAY_ENVIRONMENT_NAME?: string;
@@ -26,38 +25,27 @@ export type CoercedEnvSchema = {
   
   /**
    * **APP_PORT**  
-   * Dev-server port; mise-tasks/setup regenerates a unique value per jj  
-   * workspace in .env.development.local.  
    * ![icon](data:image/svg+xml;utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23808080%22%20d%3D%22M20.95%2022.375L18%2019.425v2.225h-2V16h5.65v2H19.4l2.95%202.95zM12%2022q-2.075%200-3.9-.788t-3.175-2.137T2.788%2015.9T2%2012t.788-3.9t2.137-3.175T8.1%202.788T12%202t3.9.788t3.175%202.137T21.213%208.1T22%2012q0%20.5-.05%201t-.15%201h-2.05q.125-.5.188-1T20%2012t-.062-1t-.188-1h-3.4q.075.5.113%201t.037%201t-.037%201t-.113%201h-2q.075-.5.113-1t.037-1t-.037-1t-.113-1h-4.7q-.075.5-.112%201T9.5%2012t.038%201t.112%201H13v2h-2.9q.3%201.075.775%202.063T12%2019.95q.5%200%201-.062t1-.113v2.05q-.5.05-1%20.113T12%2022m-7.75-8h3.4q-.075-.5-.112-1T7.5%2012t.038-1t.112-1h-3.4q-.125.5-.187%201T4%2012t.063%201t.187%201m.85-6h2.95q.225-.925.563-1.812T9.4%204.45q-1.375.45-2.475%201.363T5.1%208m4.3%2011.55q-.45-.85-.788-1.737T8.05%2016H5.1q.725%201.275%201.825%202.188T9.4%2019.55M10.1%208h3.8q-.3-1.075-.775-2.062T12%204.05q-.65.9-1.125%201.888T10.1%208m5.85%200h2.95q-.725-1.275-1.825-2.187T14.6%204.45q.45.85.788%201.738T15.95%208%22%2F%3E%3C%2Fsvg%3E)   
    */
-  APP_PORT?: number;
+  APP_PORT: number;
   
   /**
    * **BASE_URL**  
-   * Local default is the Playwright target. Deployments override via Railway env.  
    * ![icon](data:image/svg+xml;utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2032%2032%22%3E%3Cpath%20fill%3D%22%23808080%22%20d%3D%22M24%2021V9h-2v14h8v-2zm-4-6v-4c0-1.103-.897-2-2-2h-6v14h2v-6h1.48l2.335%206h2.145l-2.333-6H18c1.103%200%202-.897%202-2m-6-4h4v4h-4zM8%2023H4c-1.103%200-2-.897-2-2V9h2v12h4V9h2v12c0%201.103-.897%202-2%202%22%2F%3E%3C%2Fsvg%3E)   
    */
-  BASE_URL?: string;
-  
-  /**
-   * **INFISICAL_PROJECT_ID**  
-   * Replace with your Infisical project ID (Project Settings > Project ID).  
-   * ![icon](data:image/svg+xml;utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2032%2032%22%3E%3Cpath%20fill%3D%22%23808080%22%20d%3D%22M29%2022h-5a2.003%202.003%200%200%201-2-2v-6a2%202%200%200%201%202-2h5v2h-5v6h5ZM18%2012h-4V8h-2v14h6a2.003%202.003%200%200%200%202-2v-6a2%202%200%200%200-2-2m-4%208v-6h4v6Zm-6-8H3v2h5v2H4a2%202%200%200%200-2%202v2a2%202%200%200%200%202%202h6v-8a2%202%200%200%200-2-2m0%208H4v-2h4Z%22%2F%3E%3C%2Fsvg%3E)   
-   */
-  INFISICAL_PROJECT_ID?: string;
-  
-  /**
-   * **INFISICAL_CLIENT_ID**  
-   *   
-   * 📚 {@link https://infisical.com/docs/documentation/platform/identities/machine-identities | Infisical Machine Identities}  
-   */
-  INFISICAL_CLIENT_ID?: string;
+  BASE_URL: string;
   
   /**
    * **BETTER_AUTH_URL**  
    * ![icon](data:image/svg+xml;utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2032%2032%22%3E%3Cpath%20fill%3D%22%23808080%22%20d%3D%22M24%2021V9h-2v14h8v-2zm-4-6v-4c0-1.103-.897-2-2-2h-6v14h2v-6h1.48l2.335%206h2.145l-2.333-6H18c1.103%200%202-.897%202-2m-6-4h4v4h-4zM8%2023H4c-1.103%200-2-.897-2-2V9h2v12h4V9h2v12c0%201.103-.897%202-2%202%22%2F%3E%3C%2Fsvg%3E)   
    */
   BETTER_AUTH_URL: string;
+  
+  /**
+   * **BETTER_AUTH_SECRET_LOCAL** 🔐 _sensitive_  
+   * ![icon](data:image/svg+xml;utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2032%2032%22%3E%3Cpath%20fill%3D%22%23808080%22%20d%3D%22M29%2022h-5a2.003%202.003%200%200%201-2-2v-6a2%202%200%200%201%202-2h5v2h-5v6h5ZM18%2012h-4V8h-2v14h6a2.003%202.003%200%200%200%202-2v-6a2%202%200%200%200-2-2m-4%208v-6h4v6Zm-6-8H3v2h5v2H4a2%202%200%200%200-2%202v2a2%202%200%200%200%202%202h6v-8a2%202%200%200%200-2-2m0%208H4v-2h4Z%22%2F%3E%3C%2Fsvg%3E)   
+   */
+  BETTER_AUTH_SECRET_LOCAL?: string;
   
   /**
    * **BETTER_AUTH_SECRET** 🔐 _sensitive_  
@@ -79,9 +67,6 @@ export type CoercedEnvSchema = {
   
   /**
    * **AWS_S3_BUCKET_NAME**  
-   * S3-compatible object storage. Dev runs MinIO via docker-compose and creates  
-   * the bucket on first use; production points at a pre-provisioned bucket. Only  
-   * production requires the credentials.  
    * ![icon](data:image/svg+xml;utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2032%2032%22%3E%3Cpath%20fill%3D%22%23808080%22%20d%3D%22M29%2022h-5a2.003%202.003%200%200%201-2-2v-6a2%202%200%200%201%202-2h5v2h-5v6h5ZM18%2012h-4V8h-2v14h6a2.003%202.003%200%200%200%202-2v-6a2%202%200%200%200-2-2m-4%208v-6h4v6Zm-6-8H3v2h5v2H4a2%202%200%200%200-2%202v2a2%202%200%200%200%202%202h6v-8a2%202%200%200%200-2-2m0%208H4v-2h4Z%22%2F%3E%3C%2Fsvg%3E)   
    */
   AWS_S3_BUCKET_NAME?: string;
@@ -112,11 +97,11 @@ export type CoercedEnvSchema = {
   
 };
 
-type _CoercedEnvSchema_976c85f6 = CoercedEnvSchema;
+type _CoercedEnvSchema_ffd51687 = CoercedEnvSchema;
 
 declare module 'varlock/env' {
-  export interface TypedEnvSchema extends Readonly<_CoercedEnvSchema_976c85f6> {}
-  export interface PublicTypedEnvSchema extends Readonly<Pick<_CoercedEnvSchema_976c85f6, 'RAILWAY_ENVIRONMENT_NAME' | 'APP_ENV' | 'APP_PORT' | 'BASE_URL' | 'INFISICAL_PROJECT_ID' | 'INFISICAL_CLIENT_ID' | 'BETTER_AUTH_URL' | 'AWS_S3_BUCKET_NAME' | 'AWS_REGION' | 'AWS_ENDPOINT_URL'>> {}
+  export interface TypedEnvSchema extends Readonly<_CoercedEnvSchema_ffd51687> {}
+  export interface PublicTypedEnvSchema extends Readonly<Pick<_CoercedEnvSchema_ffd51687, 'RAILWAY_ENVIRONMENT_NAME' | 'APP_ENV' | 'APP_PORT' | 'BASE_URL' | 'BETTER_AUTH_URL' | 'AWS_S3_BUCKET_NAME' | 'AWS_REGION' | 'AWS_ENDPOINT_URL'>> {}
 }
 
 
@@ -126,11 +111,11 @@ export type EnvSchemaAsStrings = {
       : (NonNullable<CoercedEnvSchema[Property]> extends boolean ? ('true' | 'false') : string)
 };
 
-type _EnvSchemaAsStrings_976c85f6 = EnvSchemaAsStrings;
+type _EnvSchemaAsStrings_ffd51687 = EnvSchemaAsStrings;
 declare global {
 
   // add types for global process.env
   namespace NodeJS {
-    interface ProcessEnv extends _EnvSchemaAsStrings_976c85f6 {}
+    interface ProcessEnv extends _EnvSchemaAsStrings_ffd51687 {}
   }
 }

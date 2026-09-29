@@ -341,19 +341,22 @@ function main(): void {
 		readEnvFile('.env.workspace.local')['WORKTREE_NAME'] !== worktree
 
 	const database = existing['POSTGRES_DB'] ?? sanitizeDatabaseName(branch)
-	const appPort = Number(existing['APP_PORT']) || hashPort(branch)
+	const mainRoot = defaultWorkspaceRoot()
+	// Repo name in every hash input: branch names (notably the root
+	// workspace) repeat across repos, which collided their derived ports.
+	const repo = basename(mainRoot)
+	const appPort = Number(existing['APP_PORT']) || hashPort(`${repo}:${branch}`)
 
 	const postgresPort =
-		Number(existing['POSTGRES_PORT']) || hashPort(`db-${branch}`)
+		Number(existing['POSTGRES_PORT']) || hashPort(`db-${repo}:${branch}`)
 
 	const minioPort =
-		Number(existing['MINIO_PORT']) || hashPort(`minio-${branch}`)
+		Number(existing['MINIO_PORT']) || hashPort(`minio-${repo}:${branch}`)
 
 	const minioConsolePort =
 		Number(existing['MINIO_CONSOLE_PORT']) ||
-		hashPort(`minio-console-${branch}`)
+		hashPort(`minio-console-${repo}:${branch}`)
 
-	const mainRoot = defaultWorkspaceRoot()
 	const tld = proxyTld()
 	const proxySlug = registerProxySlug(mainRoot)
 	const worktreeLabel = slugify(worktree)
@@ -414,18 +417,28 @@ function main(): void {
 	seedDevLocalFile()
 }
 
-// Seeds the human-owned local file exactly once so a fresh clone runs before
-// Infisical is set up. Never rewrites an existing file; deleting the seeded
-// secret hands the value over to Infisical.
+// Seeds the human-owned local file so a fresh clone runs before Infisical is
+// set up. Skips files that already hold values; an empty file counts as
+// unseeded, so a truncation accident self-heals on the next setup run.
 function seedDevLocalFile(): void {
-	if (existsSync('.env.development.local')) return
+	if (existsSync('.env.development.local')) {
+		const hasValues = readFileSync('.env.development.local', 'utf8')
+			.split(/\r?\n/)
+			.some((line) => {
+				const trimmed = line.trim()
+
+				return trimmed !== '' && !trimmed.startsWith('#')
+			})
+
+		if (hasValues) return
+	}
 
 	writeFileSync(
 		'.env.development.local',
 		[
-			'# Local overrides; setup writes this file once and never touches it again.',
-			'# Delete the line below once BETTER_AUTH_SECRET is managed by Infisical.',
-			`BETTER_AUTH_SECRET="${randomBytes(32).toString('base64url')}"`,
+			'# Local overrides; setup seeds this once and leaves existing values alone.',
+			'# Read by BETTER_AUTH_SECRET_LOCAL in .env.schema, development only.',
+			`BETTER_AUTH_SECRET_LOCAL="${randomBytes(32).toString('base64url')}"`,
 			'',
 		].join('\n'),
 	)
