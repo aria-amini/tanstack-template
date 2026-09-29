@@ -53,9 +53,9 @@ export function useTheme() {
 	return context
 }
 
-/** Segmented sun/moon switch; the knob rides the `.dark` class applied by the
- * pre-hydration theme bootstrap, so the visual state is correct before
- * hydration. */
+/** Console key for the board's night/day rendition; the knob rides the
+ * `.dark` class applied by the pre-hydration theme bootstrap, so the visual
+ * state is correct before hydration. */
 export function ThemeSwitch({ className }: { className?: string }) {
 	const { theme, setThemePreference } = useTheme()
 
@@ -69,26 +69,24 @@ export function ThemeSwitch({ className }: { className?: string }) {
 			aria-label="Dark mode"
 			onClick={toggle}
 			className={cn(
-				'relative flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 outline-none',
-				'bg-input/70 transition-colors motion-reduce:transition-none dark:bg-muted',
+				'relative flex h-8 w-16 shrink-0 items-center border bg-card shadow-sm outline-none',
 				'focus-visible:ring-3 focus-visible:ring-ring/50',
-				'before:absolute before:-inset-2.5 before:rounded-md before:content-[""]',
 				className,
 			)}
 		>
 			<Moon
 				aria-hidden
-				className="absolute left-1 size-3 text-white"
+				className="text-muted-foreground absolute left-1.5 size-3.5"
 				weight="bold"
 			/>
 			<Sun
 				aria-hidden
-				className="absolute right-1 size-3 text-white"
+				className="text-muted-foreground absolute right-1.5 size-3.5"
 				weight="bold"
 			/>
 			<span
 				aria-hidden
-				className="ring-border/50 bg-background relative size-5 rounded-full shadow-sm ring-1 transition-transform motion-reduce:transition-none dark:translate-x-5"
+				className="bg-muted ring-border/50 dark:bg-primary absolute top-0.5 bottom-0.5 left-0.5 w-7 shadow-sm ring-1 transition-transform motion-reduce:transition-none dark:translate-x-8"
 			/>
 		</button>
 	)

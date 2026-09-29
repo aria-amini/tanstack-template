@@ -1,24 +1,11 @@
-import { foreignKey, index, text, timestamp } from 'drizzle-orm/pg-core'
-import { pgTable } from 'drizzle-orm/pg-core'
+import { index, jsonb, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 
-export * from './auth'
-
-import { user } from './auth'
-
-export const items = pgTable(
-	'items',
+export const cacheEntries = pgTable(
+	'cache_entries',
 	{
-		id: text().primaryKey(),
-		name: text().notNull(),
-		userId: text().notNull(),
-		createdAt: timestamp({ withTimezone: true }).notNull(),
+		key: text().primaryKey(),
+		value: jsonb().notNull(),
+		expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
 	},
-	(table) => [
-		index('items_user_id_index').on(table.userId),
-		foreignKey({
-			columns: [table.userId],
-			foreignColumns: [user.id],
-			name: 'items_user_id_fk',
-		}).onDelete('cascade'),
-	],
+	(table) => [index('cache_entries_expires_at_index').on(table.expiresAt)],
 )

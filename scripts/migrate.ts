@@ -1,40 +1,18 @@
-import 'varlock/auto-load'
-import { existsSync } from 'node:fs'
+import { resolve } from 'node:path'
 
-import { sql } from 'drizzle-orm'
+import { drizzle } from 'drizzle-orm/node-postgres'
 import { migrate } from 'drizzle-orm/node-postgres/migrator'
+import { Pool } from 'pg'
 
-import { createDb } from '../src/db/connection'
-import { REQUIRED_EXTENSIONS } from '../src/db/extensions'
+const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
-// Wraps drizzle-orm's migrator instead of `drizzle-kit migrate` because the
-// CLI swallows the underlying Postgres error (just exits 1), which makes
-// failures invisible in deploy logs. This prints the full error.
-async function main() {
-	const db = createDb()
+const db = drizzle({ client: pool })
 
-	if (!existsSync('src/db/migrations')) {
-		console.log('No migrations found; run db:generate or db:push.')
-		await db.$client.end()
-
-		return
-	}
-
-	console.log('Running migrations...')
-
-	try {
-		for (const ext of REQUIRED_EXTENSIONS) {
-			await db.execute(sql`CREATE EXTENSION IF NOT EXISTS ${sql.raw(ext)}`)
-		}
-
-		await migrate(db, { migrationsFolder: 'src/db/migrations' })
-		console.log('Migrations complete.')
-	} catch (error) {
-		console.error('Migration failed:', error)
-		process.exitCode = 1
-	} finally {
-		await db.$client.end()
-	}
+try {
+	await migrate(db, {
+		migrationsFolder: resolve(import.meta.dirname, '../src/db/migrations'),
+	})
+	console.log('Migrations complete.')
+} finally {
+	await pool.end()
 }
-
-void main()

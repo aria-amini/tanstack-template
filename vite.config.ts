@@ -26,7 +26,6 @@ const fmt = {
 		'pnpm-lock.yaml',
 		'env.d.ts',
 		'**/routeTree.gen.ts',
-		'src/db/migrations/**',
 		'tools/oxlint/anti-slop/**',
 	],
 	overrides: [
@@ -242,11 +241,7 @@ export default defineConfig({
 				extends: true,
 				test: {
 					name: 'server',
-					include: [
-						'src/**/*.{server,db}.test.ts',
-						'src/**/db.test.ts',
-						'src/**/server.test.ts',
-					],
+					include: ['src/**/*.server.test.ts', 'src/**/server.test.ts'],
 					testTimeout: 30_000,
 					fileParallelism: false,
 				},

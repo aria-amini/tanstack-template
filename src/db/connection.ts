@@ -1,22 +1,12 @@
-import { createServerOnlyFn } from '@tanstack/react-start'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { Pool } from 'pg'
 
-import { serverEnv as env } from '@/env.server'
+const connectionString = process.env.DATABASE_URL
 
-let pool: Pool | undefined
-
-function getPool() {
-	pool ??= new Pool({
-		connectionString: env.DATABASE_URL,
-	})
-
-	return pool
+if (!connectionString) {
+	throw new Error('DATABASE_URL is not set')
 }
 
-/** Creates a Drizzle database client backed by the application pool. */
-export const createDb = createServerOnlyFn(() => {
-	return drizzle({
-		client: getPool(),
-	})
-})
+export const pool = new Pool({ connectionString })
+
+export const db = drizzle({ client: pool })

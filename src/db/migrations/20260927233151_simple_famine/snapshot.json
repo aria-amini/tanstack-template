@@ -1,0 +1,83 @@
+{
+	"version": "8",
+	"dialect": "postgres",
+	"id": "bd55b48d-526f-4e11-ac0c-16041e9e990b",
+	"prevIds": ["00000000-0000-0000-0000-000000000000"],
+	"ddl": [
+		{
+			"isRlsEnabled": false,
+			"name": "cache_entries",
+			"entityType": "tables",
+			"schema": "public"
+		},
+		{
+			"type": "text",
+			"typeSchema": null,
+			"notNull": true,
+			"dimensions": 0,
+			"default": null,
+			"generated": null,
+			"identity": null,
+			"name": "key",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "cache_entries"
+		},
+		{
+			"type": "jsonb",
+			"typeSchema": null,
+			"notNull": true,
+			"dimensions": 0,
+			"default": null,
+			"generated": null,
+			"identity": null,
+			"name": "value",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "cache_entries"
+		},
+		{
+			"type": "timestamp with time zone",
+			"typeSchema": null,
+			"notNull": true,
+			"dimensions": 0,
+			"default": null,
+			"generated": null,
+			"identity": null,
+			"name": "expires_at",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "cache_entries"
+		},
+		{
+			"nameExplicit": true,
+			"columns": [
+				{
+					"value": "expires_at",
+					"isExpression": false,
+					"asc": true,
+					"nullsFirst": false,
+					"opclass": null
+				}
+			],
+			"isUnique": false,
+			"where": null,
+			"with": "",
+			"method": "btree",
+			"concurrently": false,
+			"name": "cache_entries_expires_at_index",
+			"entityType": "indexes",
+			"schema": "public",
+			"table": "cache_entries"
+		},
+		{
+			"columns": ["key"],
+			"nameExplicit": false,
+			"name": "cache_entries_pkey",
+			"schema": "public",
+			"table": "cache_entries",
+			"entityType": "pks"
+		}
+	],
+	"renames": []
+}
