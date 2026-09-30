@@ -59,7 +59,12 @@ verify_app() {
 
 step "Install tools (mise i)" mise install
 step "Install packages (vp i)" vp i
-step "Generate .env.workspace.local" mise run setup
+setup_summary="$(mktemp)"
+trap 'rm -f "$setup_summary"' EXIT
+
+# gum spin execs commands directly and swallows their stdout, so setup's
+# summary is redirected to a file at the child level for the finish box.
+step "Generate .env.workspace.local" bash -c 'scripts/setup.ts >"$1"' bash "$setup_summary"
 step "Remove orphaned compose stacks" mise run gc
 
 # Agent-safe mode redacts values and fails fast instead of waiting at an
@@ -81,8 +86,9 @@ fi
 # Bootstrap only succeeds when the URL a human will open actually answers.
 # Called directly: gum spin can only exec external commands, not functions.
 if [[ -n "$base_url" ]]; then
-	echo "  Verify app responds..."
+	printf '  Verify app responds...'
 	verify_app "$base_url"
+	printf '\r\033[K'
 	gum style --foreground 82 "  ✓ Verify app responds"
 fi
 
@@ -90,5 +96,7 @@ finish_args=(
 	--border rounded --border-foreground 82 --padding "0 3" --margin "1 0"
 	"$(gum style --bold --foreground 82 '✓ Bootstrap complete')"
 )
-[[ -n "$base_url" ]] && finish_args+=("$(gum style --foreground 39 "$base_url")")
+while IFS= read -r entry; do
+	finish_args+=("$(gum style --foreground 39 "$entry")")
+done < <(sed -n 's/^  //p' "$setup_summary")
 gum style "${finish_args[@]}"

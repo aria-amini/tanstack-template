@@ -1,5 +1,4 @@
 #!/usr/bin/env -S vp exec tsx
-//MISE description="Generate per-workspace ports and .env.workspace.local"
 import { execFileSync } from 'node:child_process'
 import { randomBytes } from 'node:crypto'
 import { existsSync, readFileSync, realpathSync, writeFileSync } from 'node:fs'
