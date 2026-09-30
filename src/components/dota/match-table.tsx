@@ -1,5 +1,6 @@
 import { cn } from 'cn'
 
+import { HeroIcon } from '@/components/dota/hero-icon'
 import { LampDot } from '@/components/ui/lamp'
 import {
 	Table,
@@ -47,7 +48,12 @@ export function MatchTable({ matches }: { matches: Array<MatchRecord> }) {
 							<TableCell muted numeric>
 								{match.playedAt}
 							</TableCell>
-							<TableCell strong>{match.hero}</TableCell>
+							<TableCell strong>
+								<span className="flex items-center gap-2">
+									<HeroIcon hero={match.hero} />
+									{match.hero}
+								</span>
+							</TableCell>
 							<TableCell>
 								<ResultLamp won={match.won} />
 							</TableCell>

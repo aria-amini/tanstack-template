@@ -4,6 +4,8 @@ import type { CSSProperties } from 'react'
 import { z } from 'zod'
 
 import { BoardHeader, LadderBoard } from '@/components/dota/board-frame'
+import { HeroIcon } from '@/components/dota/hero-icon'
+import { RankIcon } from '@/components/dota/rank-icon'
 import {
 	ChannelRail,
 	type ChannelItemProps,
@@ -79,6 +81,7 @@ function MetaPage() {
 
 	const channels: Array<ChannelItemProps> = BRACKETS.map((name) => ({
 		label: name,
+		icon: <RankIcon bracket={name} />,
 		active: name === active,
 		render: <Link to="/" search={{ bracket: name }} />,
 	}))
@@ -149,7 +152,12 @@ function MetaPage() {
 										<TableCell muted numeric className="text-right">
 											{index + 1}
 										</TableCell>
-										<TableCell strong>{row.hero}</TableCell>
+										<TableCell strong>
+											<span className="flex items-center gap-2">
+												<HeroIcon hero={row.hero} />
+												{row.hero}
+											</span>
+										</TableCell>
 										<TableCell numeric className="text-right">
 											{row.picks.toLocaleString()}
 										</TableCell>

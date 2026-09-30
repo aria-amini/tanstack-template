@@ -1,16 +1,24 @@
 import { mergeProps } from '@base-ui/react/merge-props'
 import { useRender } from '@base-ui/react/use-render'
 import { cn } from 'cn'
+import type { ReactNode } from 'react'
 
 import { LampDot } from '@/components/ui/lamp'
 
 type ChannelItemProps = {
 	label: string
+	icon?: ReactNode
 	active?: boolean
 	render?: useRender.ComponentProps<'a'>['render']
 } & Omit<useRender.ComponentProps<'a'>, 'className' | 'render'>
 
-function ChannelItem({ label, active, render, ...rest }: ChannelItemProps) {
+function ChannelItem({
+	label,
+	icon,
+	active,
+	render,
+	...rest
+}: ChannelItemProps) {
 	return useRender({
 		defaultTagName: 'a',
 		render,
@@ -28,6 +36,7 @@ function ChannelItem({ label, active, render, ...rest }: ChannelItemProps) {
 				...rest,
 				children: (
 					<>
+						{icon}
 						{active ? <LampDot lit /> : null}
 						{label}
 					</>
