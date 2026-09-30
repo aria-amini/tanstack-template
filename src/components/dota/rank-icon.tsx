@@ -25,7 +25,7 @@ export function RankIcon({
 	const file = RANK_FILES[bracket]
 
 	if (!file) {
-		return <Trophy weight="fill" className={cn('size-4 shrink-0', className)} />
+		return <Trophy weight="fill" className={cn('size-5 shrink-0', className)} />
 	}
 
 	return (
@@ -33,9 +33,9 @@ export function RankIcon({
 			src={`/ranks/${file}.png`}
 			alt=""
 			loading="lazy"
-			width={18}
-			height={18}
-			className={cn('size-[1.15rem] shrink-0 object-contain', className)}
+			width={24}
+			height={24}
+			className={cn('size-6 shrink-0 object-contain', className)}
 		/>
 	)
 }
