@@ -1,12 +1,12 @@
 # dota-visualizer
 
-Full-stack TanStack Start app: React 19, Vite+, Drizzle, Postgres, Better
-Auth, Tailwind v4, shadcn, Varlock. Docker Compose runs Postgres and MinIO.
+Full-stack TanStack Start app: React 19, Vite+, Drizzle, Postgres, Better Auth,
+Tailwind v4, shadcn, Varlock. Docker Compose runs Postgres and MinIO.
 
 The dev server is a pitchfork daemon (`pitchfork.toml`). `mise run bootstrap`
 starts it and verifies the app URL. Interactive shells auto-start it on `cd`.
-Each jj workspace gets unique ports from `mise-tasks/setup`; re-run anytime
-with `mise run setup`.
+Each jj workspace gets unique ports from `mise-tasks/setup`; re-run anytime with
+`mise run setup`.
 
 ## Local URLs
 
@@ -17,13 +17,14 @@ example `dota-visualizer-my-task`. Nested hostnames (`worktree.app.lvh…`) and
 direct `:9443` access do not work: the wildcard cert covers one level, and the
 proxy binds loopback only.
 
-`mise run setup` registers the workspace slug and writes `BASE_URL`.
-Never run `pitchfork proxy setup` here — it would grab port 443 from the
-global Caddy TLS edge.
+`mise run setup` registers the workspace slug and writes `BASE_URL`. Never run
+`pitchfork proxy setup` here — it would grab port 443 from the global Caddy TLS
+edge.
 
 ## Commands
 
-- `pitchfork list` / `pitchfork logs dev` / `pitchfork tui` — inspect the dev daemon
+- `pitchfork list` / `pitchfork logs dev` / `pitchfork tui` — inspect the dev
+  daemon
 - `vp check` — format, lint, and type-check
 - `vp test run` — run Vitest projects
 - `vp run test:ui` — Vitest UI in the browser. Clients can write snapshots and
