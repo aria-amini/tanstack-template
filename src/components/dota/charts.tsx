@@ -19,7 +19,6 @@ import {
 	ChartTooltipContent,
 	type ChartConfig,
 } from '@/components/ui/chart'
-import { heroIconSrc } from '@/lib/dota/heroes'
 import type { HeroBracketWinrate, MatchHistory } from '@/lib/dota/opendota'
 
 const winLossConfig = {
@@ -157,34 +156,6 @@ export function BracketWinrateChart({
 	)
 }
 
-// Rendered via recharts tick cloneElement: x/y/payload are injected at runtime.
-function HeroAxisTick({
-	x = 0,
-	y = 0,
-	payload,
-}: {
-	x?: number
-	y?: number
-	payload?: { value: string }
-}) {
-	if (!payload) return null
-
-	return (
-		<g transform={`translate(${x},${y})`}>
-			<image
-				href={heroIconSrc(payload.value)}
-				x={-82}
-				y={-8}
-				width={16}
-				height={16}
-			/>
-			<text x={-60} y={4} className="fill-muted-foreground text-xs">
-				{payload.value}
-			</text>
-		</g>
-	)
-}
-
 export function HeroBreakdown({ history }: { history: MatchHistory }) {
 	const data = history.heroTallies.map((tally) => ({
 		hero: tally.hero,
@@ -206,7 +177,6 @@ export function HeroBreakdown({ history }: { history: MatchHistory }) {
 				<YAxis
 					type="category"
 					dataKey="hero"
-					tick={<HeroAxisTick />}
 					tickLine={false}
 					axisLine={false}
 					tickMargin={8}
