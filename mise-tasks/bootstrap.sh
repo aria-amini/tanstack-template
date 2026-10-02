@@ -44,7 +44,7 @@ step() {
 	gum style --foreground 82 "  ✓ $title"
 }
 
-verify_app() {
+poll_url() {
 	local url="$1"
 	local attempts=30
 	for ((i = 1; i <= attempts; i++)); do
@@ -53,7 +53,27 @@ verify_app() {
 		fi
 		sleep 1
 	done
-	gum style --foreground 196 "App did not answer at $url after ${attempts}s" >&2
+	return 1
+}
+
+verify_app() {
+	local url="$1"
+	if poll_url "$url"; then
+		return 0
+	fi
+	# pitchfork start skips readiness checks for an already-running daemon,
+	# and a daemon process can outlive a deleted workspace directory while
+	# still reporting running. Force one restart before giving up.
+	if [[ -f pitchfork.toml ]] && command -v pitchfork &> /dev/null; then
+		printf '\r\033[K' >&2
+		gum style --foreground 220 "  App not answering; force-restarting dev daemon" >&2
+		pitchfork restart dev --force
+		if poll_url "$url"; then
+			return 0
+		fi
+	fi
+	printf '\r\033[K' >&2
+	gum style --foreground 196 "App did not answer at $url after two 30s polls" >&2
 	return 1
 }
 
@@ -78,7 +98,8 @@ base_url="$(sed -n 's/^BASE_URL="\{0,1\}\([^"]*\)"\{0,1\}$/\1/p' .env.workspace.
 base_url="${base_url:-$(sed -n 's/^BASE_URL="\{0,1\}\([^"]*\)"\{0,1\}$/\1/p' .env.development.local 2>/dev/null)}"
 
 # Headless workspaces (herdr panes, CI) never trigger pitchfork's cd hook,
-# so the daemon must be started explicitly.
+# so the daemon must be started explicitly. pitchfork.local.toml gates
+# readiness on a real HTTP 2xx, not vite's "Local:" banner.
 if [[ -f pitchfork.toml ]] && command -v pitchfork &> /dev/null; then
 	step "Start dev daemon" pitchfork start dev
 fi

@@ -213,12 +213,20 @@ function updateEnvFile(
 // opens more than one). The port lives in the untracked file because it
 // differs per workspace — a tracked port line conflicts on every rebase.
 // pitchfork treats the local file as the project config, so it must carry
-// the full daemon definition, not just the override.
+// the full daemon definition, not just the override. The ready probe needs
+// the same port rewrite, or readiness blocks on a URL nothing serves.
 function setDaemonPort(appPort: number): void {
 	const base = 'pitchfork.toml'
 
 	if (!existsSync(base)) return
-	const contents = readFileSync(base, 'utf8').replace(/^port = \d+\n/m, '')
+
+	const contents = readFileSync(base, 'utf8')
+		.replace(/^port = \d+\n/m, '')
+		.replace(
+			/^(ready_http = "http:\/\/127\.0\.0\.1:)\d+(\/")/m,
+			`$1${appPort}$2`,
+		)
+
 	writeFileSync(
 		'pitchfork.local.toml',
 		`${contents.trimEnd()}\nport = ${appPort}\n`,

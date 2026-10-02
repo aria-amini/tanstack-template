@@ -8,4 +8,8 @@ run = "exec vp dev"
 mise = true
 auto = ["start", "stop"]
 retry = 3
-ready_output = "Local:"
+# Vite prints its "Local:" banner even when the server is broken, so ready
+# probes need real HTTP. setup.ts rewrites this port to the workspace's
+# APP_PORT in pitchfork.local.toml; 3000 matches vite's fallback for clones
+# that skip setup.
+ready_http = "http://127.0.0.1:3000/"
