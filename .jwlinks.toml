@@ -1,4 +1,0 @@
-[[link]]
-source = ".env.local"
-target = "../dota-visualizer/.env.local"
-required = true
