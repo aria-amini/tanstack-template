@@ -73,7 +73,15 @@ _templates_suffix: '.jinja'
 _skip_if_exists: []
 
 _exclude:
+  # Replaces copier's defaults, so they are repeated here.
   - 'copier.yml'
+  - '~*'
+  - '*.py[co]'
+  - '__pycache__'
+  - '.git'
+  - '.jj'
+  - '.DS_Store'
+  - '.svn'
   - 'README.md'
   - 'node_modules/**'
   - .env.local
