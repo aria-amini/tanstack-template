@@ -1,0 +1,26 @@
+import { createFileRoute } from '@tanstack/react-router'
+import { Link } from '@tanstack/react-router'
+
+import { Button } from '@/components/ui/button'
+
+export const Route = createFileRoute('/')({ component: LandingPage })
+
+function LandingPage() {
+	return (
+		<main className="grid min-h-dvh place-items-center p-8">
+			<div className="max-w-xl space-y-6 text-center">
+				<p className="text-muted-foreground text-sm tracking-widest uppercase">
+					A TanStack Start app
+				</p>
+				<h1 className="text-6xl font-bold tracking-tight">{{ app_name }}</h1>
+				<p className="text-muted-foreground text-lg">
+					Full-stack React 19 with typed routing, server functions, and Drizzle
+					on Postgres.
+				</p>
+				<div className="flex justify-center gap-3">
+					<Button render={<Link to="/auth/login" />}>Sign in</Button>
+				</div>
+			</div>
+		</main>
+	)
+}
