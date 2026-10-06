@@ -53,6 +53,17 @@ edge.
 Use `pnpm` through Vite+ (`vp i`, `vp run <script>`). Secrets resolve through
 Varlock; never commit generated or local secret files.
 
+## Tests
+
+Use the smallest test scope that covers the behavior. Test regressions and
+meaningful behavior changes; skip trivial edits.
+
+- **Unit** (`src/**/*.unit.test.ts`): pure logic, edge cases, and transformations.
+- **Server** (`src/**/*.server.test.ts`): server logic and database integrations.
+- **Browser** (`src/**/*.test.tsx`, `tests/**/*.test.tsx`): component interactions
+  and visual states in real Chromium, on desktop and mobile.
+- **E2E** (`e2e/`): critical user journeys against a local or deployed app URL.
+
 ## Style rules
 
 ### Always build `className` with `cn()`
