@@ -5,6 +5,6 @@ vite-plus = "https://github.com/markmals/mise-vite-plus"
 vite-plus = "latest"
 jq = "latest"
 
-[tasks.gc]
-description = "Remove compose stacks whose workspace directory is gone (--volumes also deletes data)"
-run = "bash scripts/gc.sh"
+[tasks.bootstrap]
+description = "Bootstrap a fresh clone"
+run = "node mise-tasks/bootstrap.ts"

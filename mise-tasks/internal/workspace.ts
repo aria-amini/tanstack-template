@@ -1,8 +1,8 @@
-#!/usr/bin/env -S vp exec tsx
-import { execFileSync } from 'node:child_process'
 import { randomBytes } from 'node:crypto'
 import { existsSync, readFileSync, realpathSync, writeFileSync } from 'node:fs'
 import { basename } from 'node:path'
+
+import { execaSync } from 'execa'
 
 const MASK_64 = (1n << 64n) - 1n
 
@@ -92,10 +92,9 @@ function sanitizeDatabaseName(value: string): string {
 }
 
 function run(command: string, args: string[]): string {
-	return execFileSync(command, args, {
-		encoding: 'utf8',
+	return execaSync(command, args, {
 		stdio: ['ignore', 'pipe', 'ignore'],
-	}).trim()
+	}).stdout.trim()
 }
 
 interface WorkspaceInfo {
@@ -257,11 +256,10 @@ function defaultWorkspaceRoot(): string {
 }
 
 function pitchfork(args: string[]): string {
-	return execFileSync('pitchfork', args, {
-		encoding: 'utf8',
+	return execaSync('pitchfork', args, {
 		stdio: ['ignore', 'pipe', 'ignore'],
 		timeout: 10_000,
-	}).trim()
+	}).stdout.trim()
 }
 
 function pitchforkAvailable(): boolean {
@@ -348,7 +346,7 @@ function existingPorts(worktree: string): Record<string, string> {
 	return entries
 }
 
-function main(): void {
+export function setupWorkspace() {
 	// Never honor WORKTREE_NAME/WORKTREE_BRANCH from the environment:
 	// nothing legitimate sets them (wt passes template vars, not env), and
 	// inherited stale values from another workspace must not steer setup.
@@ -432,22 +430,30 @@ function main(): void {
 
 	setDaemonPort(appPort)
 
-	console.log(`Generated .env.workspace.local for ${branch}:`)
-	console.log(`  app:      http://localhost:${appPort}`)
-	console.log(`  postgres: localhost:${postgresPort}/${database}`)
-	console.log(`  minio:    http://localhost:${minioPort}`)
+	const summary = [
+		`app:      http://localhost:${appPort}`,
+		`postgres: localhost:${postgresPort}/${database}`,
+		`minio:    http://localhost:${minioPort}`,
+	]
 
 	if (proxyUp) {
-		console.log(`  proxy:    https://${proxyHost}`)
+		summary.push(`proxy:    https://${proxyHost}`)
 	}
 
-	seedDevLocalFile()
+	if (seedDevLocalFile()) {
+		summary.push('Seeded a local BETTER_AUTH_SECRET.')
+	}
+
+	return {
+		baseUrl: proxyUp ? `https://${proxyHost}` : `http://localhost:${appPort}`,
+		summary,
+	}
 }
 
 // Seeds the human-owned local file so a fresh clone runs before secrets are
 // set up. Skips files that already hold values; an empty file counts as
 // unseeded, so a truncation accident self-heals on the next setup run.
-function seedDevLocalFile(): void {
+function seedDevLocalFile(): boolean {
 	if (existsSync('.env.development.local')) {
 		const hasValues = readFileSync('.env.development.local', 'utf8')
 			.split(/\r?\n/)
@@ -457,7 +463,7 @@ function seedDevLocalFile(): void {
 				return trimmed !== '' && !trimmed.startsWith('#')
 			})
 
-		if (hasValues) return
+		if (hasValues) return false
 	}
 
 	writeFileSync(
@@ -470,7 +476,5 @@ function seedDevLocalFile(): void {
 		].join('\n'),
 	)
 
-	console.log('Seeded .env.development.local with a local BETTER_AUTH_SECRET.')
+	return true
 }
-
-main()

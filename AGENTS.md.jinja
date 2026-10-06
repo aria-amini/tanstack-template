@@ -20,8 +20,7 @@ Product analytics run through PostHog behind a `/api/ingest` proxy.
 
 The dev server is a pitchfork daemon (`pitchfork.toml`). `mise run bootstrap`
 starts it and verifies the app URL. Interactive shells auto-start it on `cd`.
-Each jj workspace gets unique ports from `scripts/setup.ts`, which bootstrap
-runs; re-run it anytime.
+Bootstrap assigns each jj workspace unique ports. Re-run it anytime.
 
 ## Local URLs
 
@@ -32,14 +31,16 @@ example `{{ app_name }}-my-task`. Nested hostnames (`worktree.app.lvh…`) and
 direct `:9443` access do not work: the wildcard cert covers one level, and the
 proxy binds loopback only.
 
-`scripts/setup.ts` registers the workspace slug and writes `BASE_URL`. Never run
-`pitchfork proxy setup` here — it would grab port 443 from the global Caddy TLS
-edge.
+`mise run bootstrap` registers the workspace slug and writes `BASE_URL`. Never
+run `pitchfork proxy setup` here — it would grab port 443 from the global Caddy
+TLS edge.
 
 ## Commands
 
 - `pitchfork list` / `pitchfork logs dev` / `pitchfork tui` — inspect the dev
   daemon
+- `mise run bootstrap` — configure the workspace, remove orphaned Docker
+  resources, and start the app
 - `vp check` — format, lint, and type-check
 - `vp test run` — run Vitest projects
 - `vp run test:ui` — Vitest UI in the browser. Clients can write snapshots and
