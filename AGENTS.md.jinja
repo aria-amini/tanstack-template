@@ -6,8 +6,8 @@ Tailwind v4, shadcn, Varlock. Docker Compose runs Postgres.
 
 Google sign-in uses one shared dev OAuth client (type "Desktop app", so any
 loopback port works) configured through `GOOGLE_CLIENT_ID` /
-`GOOGLE_CLIENT_SECRET`. Deployed environments get dedicated credentials
-injected at runtime.
+`GOOGLE_CLIENT_SECRET`. Deployed environments get dedicated credentials injected
+at runtime.
 {%- endif %}
 {%- if sentry %}
 
@@ -20,7 +20,8 @@ Product analytics run through PostHog behind a `/api/ingest` proxy.
 
 The dev server is a pitchfork daemon (`pitchfork.toml`). `mise run bootstrap`
 starts it and verifies the app URL. Interactive shells auto-start it on `cd`.
-Bootstrap assigns each jj workspace unique ports. Re-run it anytime.
+Bootstrap assigns each jj workspace unique ports. Re-run it anytime. Pitchfork
+passes its assigned `PORT` to Vite as `APP_PORT` and probes that same port.
 
 ## Local URLs
 
@@ -59,11 +60,16 @@ Varlock; never commit generated or local secret files.
 Use the smallest test scope that covers the behavior. Test regressions and
 meaningful behavior changes; skip trivial edits.
 
-- **Unit** (`src/**/*.unit.test.ts`): pure logic, edge cases, and transformations.
-- **Server** (`src/**/*.server.test.ts`): server logic and database integrations.
-- **Browser** (`src/**/*.test.tsx`, `tests/**/*.test.tsx`): component interactions
-  and visual states in real Chromium, on desktop and mobile.
-- **E2E** (`e2e/`): critical user journeys against a local or deployed app URL.
+- **Unit** (`src/**/*.unit.test.ts`): pure logic, edge cases, and
+  transformations.
+- **Server** (`src/**/*.server.test.ts`): server logic and database
+  integrations.
+- **Browser** (`src/**/*.test.tsx`, `tests/**/*.test.tsx`): component
+  interactions and visual states in real Chromium, on desktop and mobile.
+- **E2E** (`e2e/`): smoke checks against a local or deployed app URL.
+
+Install full Chromium with `vp exec playwright install chromium --no-shell`.
+Screenshot assertions belong in Vitest Browser Mode.
 
 ## Style rules
 

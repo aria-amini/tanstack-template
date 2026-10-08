@@ -51,13 +51,11 @@ export function NotFoundComponent() {
 // ========================================================================
 
 export function ServerErrorComponent({ {% if sentry %}error, {% endif %}reset }: ErrorComponentProps) {
-{%- if sentry %}
-	useEffect(() => {
+{% if sentry %}	useEffect(() => {
 		Sentry.captureException(error)
 	}, [error])
-{%- endif %}
 
-	return (
+{% endif %}	return (
 		<div className="flex flex-1 flex-col items-center justify-center px-6 py-24">
 			<Card className="mx-auto max-w-xl text-center">
 				<CardContent>

@@ -1,0 +1,55 @@
+name: Template CI
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: template-ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  scaffold:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        features: [false, true]
+    env:
+      APP_ENV: test
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v7
+      - name: Render the template
+        run: |
+          uvx --from copier==9.18.2 copier copy \
+          --trust --skip-tasks --defaults --quiet \
+          --vcs-ref="${{ github.sha }}" \
+          -d app_name=scaffold-check \
+          -d sentry=${{ matrix.features }} \
+          -d sentry_org=scaffold-check \
+          -d sentry_dsn=https://public@o0.ingest.us.sentry.io/0 \
+          -d posthog=${{ matrix.features }} \
+          -d posthog_project_token=phc_scaffold_check \
+          -d google_auth=${{ matrix.features }} \
+          -d google_client_id=fixture.apps.googleusercontent.com \
+          . "$RUNNER_TEMP/app"
+      - uses: voidzero-dev/setup-vp@v1
+        with:
+          version: '0.3.3'
+          node-version-file: .node-version
+          working-directory: ${{ runner.temp }}/app
+          run-install: false
+      - name: Install dependencies
+        working-directory: ${{ runner.temp }}/app
+        run: vp install --no-frozen-lockfile
+      - name: Install Chromium
+        working-directory: ${{ runner.temp }}/app
+        run: vp exec playwright install chromium --with-deps --no-shell
+      - name: Validate the generated app
+        working-directory: ${{ runner.temp }}/app
+        run: |
+          vp check
+          vp test run
+          vp run build

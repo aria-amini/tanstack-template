@@ -238,7 +238,11 @@ export default defineConfig({
 				extends: true,
 				test: {
 					name: 'unit',
-					include: ['src/**/*.unit.test.ts', 'src/**/*.test.unit.ts'],
+					include: [
+						'src/**/*.unit.test.ts',
+						'src/**/*.test.unit.ts',
+						'tests/**/*.unit.test.ts',
+					],
 				},
 			},
 			{
@@ -287,7 +291,10 @@ export default defineConfig({
 							},
 						],
 						provider: playwright({
-							launchOptions: { args: ['--disable-lcd-text'] },
+							launchOptions: {
+								channel: 'chromium',
+								args: ['--disable-lcd-text', '--headless=new'],
+							},
 							actionTimeout: 3_000,
 						}),
 						enabled: true,

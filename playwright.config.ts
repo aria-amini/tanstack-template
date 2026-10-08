@@ -1,7 +1,8 @@
 import { defineConfig, devices } from '@playwright/test'
 
 const baseURL =
-	process.env.BASE_URL ?? `http://localhost:${process.env.APP_PORT ?? '3000'}`
+	process.env.BASE_URL?.trim() ||
+	`http://localhost:${process.env.APP_PORT ?? '3000'}`
 
 export default defineConfig({
 	testDir: './e2e',
@@ -13,6 +14,7 @@ export default defineConfig({
 	reporter: [['html', { open: 'never', outputFolder: '.playwright/report' }]],
 	use: {
 		baseURL,
+		channel: 'chromium',
 		ignoreHTTPSErrors: !process.env.CI && baseURL.startsWith('https://'),
 		trace: 'retain-on-first-failure',
 		screenshot: 'on',
@@ -25,7 +27,7 @@ export default defineConfig({
 			name: 'chromium',
 			use: {
 				...devices['Desktop Chrome'],
-				launchOptions: { args: ['--disable-lcd-text'] },
+				launchOptions: { args: ['--disable-lcd-text', '--headless=new'] },
 			},
 		},
 		{
@@ -33,7 +35,7 @@ export default defineConfig({
 			use: {
 				...devices['Desktop Chrome'],
 				viewport: { width: 320, height: 800 },
-				launchOptions: { args: ['--disable-lcd-text'] },
+				launchOptions: { args: ['--disable-lcd-text', '--headless=new'] },
 			},
 		},
 	],

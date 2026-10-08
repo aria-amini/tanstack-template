@@ -207,24 +207,14 @@ function updateEnvFile(
 	writeFileSync(path, `${lines.join('\n')}\n`)
 }
 
-// Pins the daemon port in pitchfork.local.toml (gitignored) so the pitchfork
-// proxy never has to guess which listening socket is the app (vite+/nitro
-// opens more than one). The port lives in the untracked file because it
-// differs per workspace — a tracked port line conflicts on every rebase.
-// pitchfork treats the local file as the project config, so it must carry
-// the full daemon definition, not just the override. The ready probe needs
-// the same port rewrite, or readiness blocks on a URL nothing serves.
+// Vite/Nitro opens several sockets, so Pitchfork needs an explicit app port.
+// Workspace ports stay local to avoid conflicts across checkouts.
 function setDaemonPort(appPort: number): void {
 	const base = 'pitchfork.toml'
 
 	if (!existsSync(base)) return
 
-	const contents = readFileSync(base, 'utf8')
-		.replace(/^port = \d+\n/m, '')
-		.replace(
-			/^(ready_http = "http:\/\/127\.0\.0\.1:)\d+(\/")/m,
-			`$1${appPort}$2`,
-		)
+	const contents = readFileSync(base, 'utf8').replace(/^port = \d+\n/m, '')
 
 	writeFileSync(
 		'pitchfork.local.toml',

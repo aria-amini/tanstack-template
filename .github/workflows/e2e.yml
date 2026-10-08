@@ -65,7 +65,7 @@ jobs:
           version: '0.3.3'
           node-version: '24'
       - name: Install Playwright Browsers
-        run: vpx playwright install --with-deps --only-shell
+        run: vp exec playwright install chromium --with-deps --no-shell
       # sleepApplication is enabled on Railway, so the first request has to
       # wake the app; retry until it responds.
       - name: Wait for deployment to be reachable
@@ -85,7 +85,7 @@ jobs:
           echo "Deployment never became reachable at any of: $CANDIDATES" >&2
           exit 1
       - name: Run Playwright tests
-        run: vpx playwright test
+        run: vp exec playwright test
       - name: Upload Playwright report
         if: failure()
         uses: actions/upload-artifact@v7

@@ -15,8 +15,8 @@ export const startInstance = createStart(() => ({
 	requestMiddleware: [sentryGlobalRequestMiddleware, csrfMiddleware],
 	functionMiddleware: [sentryGlobalFunctionMiddleware],
 }))
-{% else %}
+{% else -%}
 export const startInstance = createStart(() => ({
 	requestMiddleware: [csrfMiddleware],
 }))
-{% endif %}
+{% endif -%}

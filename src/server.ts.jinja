@@ -20,10 +20,10 @@ export default createServerEntry(
 		},
 	}),
 )
-{% else %}
+{% else -%}
 export default createServerEntry({
 	fetch(request: Request) {
 		return handler.fetch(request)
 	},
 })
-{% endif %}
+{% endif -%}
