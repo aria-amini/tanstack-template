@@ -1,17 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-const posthogApiHost = 'https://us.i.posthog.com'
-
-const posthogAssetsHost = 'https://us-assets.i.posthog.com'
-
-const hopByHopHeaders = new Set([
-	'connection',
-	'content-encoding',
-	'content-length',
-	'keep-alive',
-	'transfer-encoding',
-	'upgrade',
-])
+import {
+	filterRequestHeaders,
+	filterResponseHeaders,
+	resolveUpstreamUrl,
+} from '@/lib/analytics/posthog-proxy'
 
 async function proxyPosthogRequest({
 	request,
@@ -20,23 +13,20 @@ async function proxyPosthogRequest({
 	request: Request
 	params: { _splat?: string }
 }) {
-	const path = params._splat ?? ''
-	const requestUrl = new URL(request.url)
+	let upstreamUrl: URL
 
-	const upstreamHost = path.startsWith('static/')
-		? posthogAssetsHost
-		: posthogApiHost
-
-	const upstreamUrl = new URL(path, `${upstreamHost}/`)
-	upstreamUrl.search = requestUrl.search
-
-	const headers = new Headers(request.headers)
-	headers.delete('host')
-	headers.delete('connection')
+	try {
+		upstreamUrl = resolveUpstreamUrl(
+			params._splat ?? '',
+			new URL(request.url).search,
+		)
+	} catch {
+		return new Response('Bad Request', { status: 400 })
+	}
 
 	const requestInit: RequestInit & { duplex: 'half' } = {
 		method: request.method,
-		headers,
+		headers: filterRequestHeaders(request.headers),
 		body:
 			request.method === 'GET' || request.method === 'HEAD'
 				? null
@@ -46,14 +36,10 @@ async function proxyPosthogRequest({
 
 	const response = await fetch(upstreamUrl, requestInit)
 
-	const responseHeaders = new Headers(response.headers)
-
-	for (const header of hopByHopHeaders) responseHeaders.delete(header)
-
 	return new Response(response.body, {
 		status: response.status,
 		statusText: response.statusText,
-		headers: responseHeaders,
+		headers: filterResponseHeaders(response.headers),
 	})
 }
 
