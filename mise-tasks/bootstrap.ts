@@ -40,7 +40,9 @@ async function bootstrap(): Promise<void> {
 		return
 	}
 
-	const verbose = args[0] === '--verbose'
+	const verbose =
+		args[0] === '--verbose' || process.env.usage_verbose === 'true'
+
 	process.chdir(resolve(import.meta.dirname, '..'))
 	// Headless hosts lack a keyring/TPM; suppress Varlock backend probes.
 	process.env._VARLOCK_FORCE_FILE_ENCRYPTION_FALLBACK = '1'
@@ -48,9 +50,7 @@ async function bootstrap(): Promise<void> {
 	const gum = spawnSync('gum', ['--version'], { stdio: 'ignore' })
 
 	if (gum.error || gum.status !== 0) {
-		throw new Error(
-			'gum is required (installed by the dotfiles install script)',
-		)
+		throw new Error('gum is required; run mise install before bootstrap')
 	}
 
 	const appName = startupCommand(

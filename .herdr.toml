@@ -1,3 +1,10 @@
 [layout]
+name = "code"
 agent = "opencode"
 setup = "mise run bootstrap"
+ready = "✓ Bootstrap complete"
+
+[[layout.tabs]]
+name = "tests"
+left = "pitchfork tui"
+right = "vp run test:watch"
