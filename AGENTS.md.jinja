@@ -18,10 +18,18 @@ Error monitoring is wired through Sentry (`@sentry/tanstackstart-react`).
 Product analytics run through PostHog behind a `/api/ingest` proxy.
 {%- endif %}
 
-The dev server is a pitchfork daemon (`pitchfork.toml`). `mise run bootstrap`
-starts it and verifies the app URL. Interactive shells auto-start it on `cd`.
-Bootstrap assigns each jj workspace unique ports. Re-run it anytime. Pitchfork
-passes its assigned `PORT` to Vite as `APP_PORT` and probes that same port.
+## Local development
+
+Run `mise run bootstrap` for each checkout or workspace. It installs
+dependencies, registers the Pitchfork proxy URL, starts the dev daemon, and
+verifies the page. It also configures workspace ports, starts Docker services,
+and applies database migrations. Repeat the command after a checkout moves to
+repair its proxy mapping.
+
+The dev server is a Pitchfork daemon (`pitchfork.toml`). Interactive shells
+auto-start it on `cd`. Pitchfork passes its assigned `PORT` to Vite as
+`APP_PORT` and probes that same port. Start the daemon through bootstrap first;
+daemon auto-start alone does not register the proxy URL.
 
 ## Local URLs
 
