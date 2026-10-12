@@ -6,5 +6,5 @@ ready = "✓ Bootstrap complete"
 
 [[layout.tabs]]
 name = "tests"
-left = "pitchfork tui"
-right = "vp run test:watch"
+left = "pitchfork logs dev --tail"
+right = "vp run test"
