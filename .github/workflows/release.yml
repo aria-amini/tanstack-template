@@ -1,33 +1,104 @@
 name: Release
 
+# Release a main commit only after CI and Templates both pass on it. Each
+# workflow_run fires once per finished workflow, so the gate below waits for the
+# other workflow and lets the later of the two do the release.
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: [CI, Templates]
+    types: [completed]
+    branches: [main]
+  # Retry a failed publish from the current main, under the same checks.
+  workflow_dispatch:
 
-concurrency: release-${{ github.ref }}
+concurrency:
+  group: release
+  cancel-in-progress: false
 
 # npm trusted publishing: npmjs.com lists this repo and this workflow file as
 # the trusted publisher of @aamini/config, so publish needs no npm token.
 permissions:
+  actions: read
   contents: write
   id-token: write
-  pull-requests: write
 
 jobs:
   release:
+    if:
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-24.04
+    env:
+      SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+    # Only the gate and the push steps get the write token. Steps that run
+    # dependency code (install, changeset, build) never see it.
     steps:
-      - uses: actions/checkout@v6
-      - uses: voidzero-dev/setup-vp@v1
+      # A commit that main has moved past is skipped: the newer commit's own
+      # checks release its changesets together with this one's. A manual retry
+      # from a Version packages commit, which CI never runs on, checks the
+      # commit it versioned.
+      - name: Gate on main checks
+        id: gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          main=$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)
+          if [ "$main" != "$SHA" ]; then
+            echo "main is at $main, not $SHA. Skip."
+            exit 0
+          fi
+          checked=$SHA
+          author=$(gh api "repos/$GITHUB_REPOSITORY/commits/$SHA" --jq '.author.login // ""')
+          if [ "$GITHUB_EVENT_NAME" = workflow_dispatch ] && [ "$author" = 'github-actions[bot]' ]; then
+            checked=$(gh api "repos/$GITHUB_REPOSITORY/commits/$SHA" --jq '.parents[0].sha')
+          fi
+          for workflow in ci.yml templates.yml; do
+            conclusion=$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/$workflow/runs?head_sha=$checked&event=push" \
+              --jq '.workflow_runs[0].conclusion // "pending"')
+            if [ "$conclusion" != success ]; then
+              echo "$workflow is $conclusion on $checked. Skip."
+              exit 0
+            fi
+          done
+          echo "release=true" >> "$GITHUB_OUTPUT"
+      - if: steps.gate.outputs.release
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ env.SHA }}
+          persist-credentials: false
+      - if: steps.gate.outputs.release
+        uses: voidzero-dev/setup-vp@v1
         with:
           version: '1.1.0'
           node-version-file: .node-version
           cache: true
-      - uses: changesets/action@v2
-        with:
-          publish-script: vp run release
-          commit-message: Version packages
-          pr-title: Version packages
+      - name: Version packages
+        if: steps.gate.outputs.release
+        run: vp run version-packages
+      # A GITHUB_TOKEN push starts no workflows, so the version commit cannot
+      # loop back into CI or this release.
+      - name: Push the version commit
+        if: steps.gate.outputs.release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -n "$(git status --porcelain -- .changeset packages)" ]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add -A -- .changeset packages
+            git commit -m 'Version packages'
+            git push "https://x-access-token:$GH_TOKEN@github.com/$GITHUB_REPOSITORY.git" HEAD:refs/heads/main
+          fi
+      # changeset publish skips versions that npm already has, and changeset git-tag
+      # then adds any tag that an earlier failed run did not create.
+      - name: Publish
+        if: steps.gate.outputs.release
+        run: vp run release
+      - name: Push tags
+        if: steps.gate.outputs.release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run:
+          git push
+          "https://x-access-token:$GH_TOKEN@github.com/$GITHUB_REPOSITORY.git"
+          --tags
