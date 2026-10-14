@@ -75,7 +75,11 @@ jobs:
           cache: true
       - name: Version packages
         if: steps.gate.outputs.release
-        run: vp run version-packages
+        # changeset version exits 1 when no changesets are pending.
+        run: |
+          if ls .changeset/*.md >/dev/null 2>&1; then
+            vp run version-packages
+          fi
       # A GITHUB_TOKEN push starts no workflows, so the version commit cannot
       # loop back into CI or this release.
       - name: Push the version commit
