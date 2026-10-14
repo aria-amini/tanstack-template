@@ -1,12 +1,18 @@
-# TanStack Start Template
+# Toolkit
 
-Copier template for TanStack Start apps: Better Auth with optional Google
-OAuth, Sentry, PostHog, Drizzle, Playwright, and Pitchfork-aware dev servers.
+Shared app tooling for aria-amini projects: the Copier app templates and the
+`@aamini/config` package.
 
-Scaffold:
+## Templates
+
+| Template   | Contents                                                                                   |
+| ---------- | ------------------------------------------------------------------------------------------ |
+| `tanstack` | TanStack Start, Better Auth with optional Google OAuth, Sentry, PostHog, Drizzle, Pitchfork |
+
+Scaffold an app:
 
 ```bash
-copier copy https://github.com/aria-amini/tanstack-template <dir>
+copier copy --trust https://github.com/aria-amini/toolkit <dir>
 ```
 
 Update an existing app:
@@ -14,6 +20,9 @@ Update an existing app:
 ```bash
 cd <dir> && copier update --trust
 ```
+
+An app made before the monorepo has no `template` answer. On the first update,
+Copier asks for it. Answer `tanstack`.
 
 Start a generated app:
 
