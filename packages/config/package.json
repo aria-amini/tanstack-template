@@ -1,0 +1,50 @@
+{
+	"name": "@aamini/config",
+	"version": "0.0.20",
+	"description": "Shared Vite+, lint, format, type, and test config for aria-amini apps",
+	"license": "MIT",
+	"type": "module",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/aria-amini/toolkit.git",
+		"directory": "packages/config"
+	},
+	"homepage": "https://github.com/aria-amini/toolkit/tree/main/packages/config#readme",
+	"publishConfig": {
+		"access": "public",
+		"provenance": true
+	},
+	"files": [
+		"dist",
+		"tsconfig"
+	],
+	"exports": {
+		"./vite-plus": {
+			"types": "./dist/vite-plus/index.d.mts",
+			"default": "./dist/vite-plus/index.mjs"
+		},
+		"./anti-slop": {
+			"types": "./dist/anti-slop/index.d.mts",
+			"default": "./dist/anti-slop/index.mjs"
+		},
+		"./tsconfig/*.json": "./tsconfig/*.json",
+		"./package.json": "./package.json"
+	},
+	"scripts": {
+		"build": "vp pack"
+	},
+	"peerDependencies": {
+		"oxlint-plugin-eslint": "^1.73.0",
+		"vite-plus": "^1.1.0"
+	},
+	"peerDependenciesMeta": {
+		"oxlint-plugin-eslint": {
+			"optional": true
+		}
+	},
+	"devDependencies": {
+		"@types/node": "^26.1.1",
+		"typescript": "6.0.3",
+		"vite-plus": "catalog:"
+	}
+}

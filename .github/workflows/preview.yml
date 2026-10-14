@@ -1,0 +1,22 @@
+name: Preview
+
+# Publishes each commit of @aamini/config to pkg.pr.new, so an app PR can
+# install unreleased changes. Needs the pkg.pr.new GitHub App on this repo.
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: voidzero-dev/setup-vp@v1
+        with:
+          version: '1.1.0'
+          node-version-file: .node-version
+          cache: true
+      - run: vp run build
+      - run: vpx pkg-pr-new@0.0.91 publish --pnpm ./packages/config

@@ -2,7 +2,7 @@
 
 - Source: https://github.com/dmmulroy/anti-slop
 - Commit: c44ef22ca116d0ba62a3ff663a0bd13a3f3fa40b (main, 2026-09)
-- Installed: entire `src/` tree copied to `tools/oxlint/anti-slop/`, including
+- Installed: entire `src/` tree copied to `packages/config/src/anti-slop/`, including
   `vendor/eslint-stylistic/` with its LICENSE and provenance.
 - Dependency: rule sources import `vite-plus/lint/plugins`, so the plugin API
   always matches the Oxlint version that vite-plus bundles. Upstream imports
@@ -18,3 +18,7 @@
   compiler options (semantics unchanged). Vendored `*.test.ts` files are
   excluded from `tsconfig.json`; they import `vite-plus/lint/plugins-dev`
   in place of upstream `oxlint/plugins-dev`.
+- Tests: Vitest runs the `RuleTester` suites through
+  `rule-tester.setup.ts`. `require-readable-spacing-cli.test.ts` is a
+  standalone Node script that needs the `oxlint` binary, so Vitest excludes
+  it.

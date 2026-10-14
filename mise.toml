@@ -1,0 +1,6 @@
+[plugins]
+vite-plus = "https://github.com/markmals/mise-vite-plus"
+
+[tools]
+node = "24"
+vite-plus = "1.1.0"
