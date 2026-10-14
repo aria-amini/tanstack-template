@@ -1,0 +1,24 @@
+{% if astro_output == 'node' -%}
+import node from '@astrojs/node'
+{% endif -%}
+{% if react -%}
+import react from '@astrojs/react'
+{% endif -%}
+import sitemap from '@astrojs/sitemap'
+import tailwindcss from '@tailwindcss/vite'
+import varlock from '@varlock/astro-integration'
+import { defineConfig } from 'astro/config'
+
+export default defineConfig({
+	site: '{{ site_url }}',
+	output: '{{ 'server' if astro_output == 'node' else 'static' }}',
+{%- if astro_output == 'node' %}
+	adapter: node({ mode: 'standalone' }),
+{%- endif %}
+	integrations: [varlock(), sitemap(){%- if react %}, react(){%- endif %}],
+	server: { host: '127.0.0.1', port: Number(process.env.APP_PORT ?? 3000) },
+	vite: {
+		plugins: [tailwindcss()],
+		server: { strictPort: true },
+	},
+})

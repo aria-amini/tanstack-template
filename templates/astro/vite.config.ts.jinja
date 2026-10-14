@@ -1,0 +1,28 @@
+import { fmt, lint, mergeToolkitConfig } from '@aamini/config/vite-plus'
+import { defineConfig } from 'vite-plus'
+
+// Astro owns the dev server and build; Vite+ owns checks and tests.
+export default defineConfig(
+	mergeToolkitConfig(
+		{
+			fmt,
+			lint: lint('{{ 'react' if react else 'astro' }}'),
+			test: { include: ['src/**/*.unit.test.ts'], passWithNoTests: true },
+		},
+		{
+			fmt: { ignorePatterns: (preset) => [...preset, '.astro/**'] },
+			lint: {
+				jsPlugins: ['@shadcn/lint'],
+				rules: {
+					'shadcn/require-static-classes': 'error',
+					'shadcn/no-raw-colors': 'error',
+					'shadcn/no-unknown-classes': 'error',
+					'shadcn/no-arbitrary-values': ['error', { allow: ['layout'] }],
+					'shadcn/no-inline-styles': 'error',
+					'shadcn/no-restyle': ['error', { allow: ['layout'] }],
+				},
+				ignorePatterns: (preset) => [...preset, '.astro/**'],
+			},
+		},
+	),
+)

@@ -1,0 +1,9 @@
+[layout]
+name = "code"
+agent = "opencode"
+setup = "mise run bootstrap"
+
+[[layout.tabs]]
+name = "dev"
+left = "pitchfork tui"
+right = "pitchfork logs dev --tail"

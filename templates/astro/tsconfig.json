@@ -1,0 +1,11 @@
+{
+	"extends": "@aamini/config/tsconfig/astro.json",
+	"include": [".astro/types.d.ts", "**/*"],
+	"exclude": ["dist"],
+	"compilerOptions": {
+		"jsx": "react-jsx",
+		"jsxImportSource": "react",
+		"types": ["astro/client", "node"],
+		"paths": { "@/*": ["./src/*"] }
+	}
+}

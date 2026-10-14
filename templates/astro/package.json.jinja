@@ -1,0 +1,58 @@
+{
+	"name": "{{ app_name }}",
+	"version": "0.0.1",
+	"private": true,
+	"type": "module",
+	"scripts": {
+{%- if astro_output == 'node' %}
+		"start": "NODE_ENV=production HOST=${HOST:-0.0.0.0} node dist/server/entry.mjs",
+{%- endif %}
+		"dev": "astro dev --ignore-lock",
+		"build": "astro build",
+		"preview": "astro preview --ignore-lock",
+		"check": "vp check && prettier --check \"**/*.astro\" && eslint && astro check",
+		"fmt": "vp fmt && prettier --write \"**/*.astro\"",
+		"test": "vp test run --passWithNoTests",
+		"e2e": "playwright test"
+	},
+	"dependencies": {
+{%- if astro_output == 'node' %}
+		"@astrojs/node": "^11.1.7",
+{%- endif %}
+{%- if react %}
+		"@astrojs/react": "^7.0.1",
+		"react": "^19.2.7",
+		"react-dom": "^19.2.7",
+{%- endif %}
+		"@astrojs/sitemap": "^3.7.4",
+		"@fontsource-variable/dm-sans": "5.3.0",
+		"@tailwindcss/vite": "4.3.3",
+		"astro": "^7.3.8",
+		"tailwindcss": "4.3.3",
+		"cn": "^0.4.0",
+		"varlock": "^1.22.0",
+		"@varlock/astro-integration": "^1.4.3"
+	},
+	"devDependencies": {
+{%- if react %}
+		"@types/react": "^19.2.17",
+		"@types/react-dom": "^19.2.3",
+		"oxc-transform-react": "^0.145.0",
+{%- endif %}
+		"@aamini/config": "0.2.0",
+		"@astrojs/check": "^0.9.10",
+		"@playwright/test": "^1.64.0",
+		"@shadcn/lint": "^0.2.1",
+		"@types/node": "^24.19.2",
+		"@typescript-eslint/parser": "^8.71.2",
+		"astro-eslint-parser": "^3.2.0",
+		"eslint": "^10.12.0",
+		"oxlint-plugin-eslint": "^1.73.0",
+		"prettier": "3.9.10",
+		"prettier-plugin-astro": "1.1.1",
+		"prettier-plugin-tailwindcss": "0.8.1",
+		"typescript": "^6.0.3",
+		"vite-plus": "1.1.0"
+	},
+	"packageManager": "pnpm@12.8.1+sha512.f64ba907507f5ceafe06c8d38e6052d0179444580ec1279ddd5bfc11cb48aa8a2644b66598e07e761da84872a9fc57d5f902b87fa49d024198d558612aabbe45"
+}

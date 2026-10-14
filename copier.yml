@@ -9,10 +9,13 @@ template:
   help: App template
   choices:
     - tanstack
+    - astro
   default: tanstack
 
 ---
 !include templates/tanstack/copier.questions.yml
+---
+!include templates/astro/copier.questions.yml
 ---
 _templates_suffix: '.jinja'
 
@@ -33,6 +36,8 @@ _exclude:
   - '.svn'
   - 'copier.questions.yml'
   - 'node_modules/**'
+  - '{% if template == "astro" and not react %}src/components/counter.tsx{%
+    endif %}'
   - .env.local
   - .env.development.local
   - '{% if not sentry %}instrument.server.mjs{% endif %}'
@@ -54,4 +59,4 @@ _message_after_copy: |
     cd {{ _copier_conf.dst_path }}
     mise trust && mise install
     mise run bootstrap
-    vp dev
+    vp run dev

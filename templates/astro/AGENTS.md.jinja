@@ -1,0 +1,16 @@
+# {{ app_name }}
+
+Astro + Tailwind CSS, scaffolded from `~/toolkit/templates/astro`.
+
+Astro owns the dev server and build. Use `vp run dev` and `vp run build`. Vite+
+owns formatting, lint, and Vitest. Prettier and ESLint also check Astro markup.
+
+Run `vp install` before work. Run `vp run check`, `vp test run`, and
+`vp run build` before each commit. Run `vp run e2e` for route or island changes.
+
+Run `mise run bootstrap` for each checkout to register and start Pitchfork. Take
+colors from theme tokens in `src/styles/global.css`. Build dynamic classes with
+`cn()` from `cn`; never use template literals.
+
+Import the Bootstrap action from `t3.json` in T3 project Actions settings. It
+holds the agent until bootstrap exits in a new worktree.

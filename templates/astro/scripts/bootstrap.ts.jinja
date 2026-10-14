@@ -1,0 +1,27 @@
+import { spawnSync } from 'node:child_process'
+import { basename, resolve } from 'node:path'
+
+const root = resolve(import.meta.dirname, '..')
+
+const appName = '{{ app_name }}'
+
+const checkout = basename(root)
+
+const slug = (checkout === appName ? appName : `${appName}-${checkout}`)
+	.replaceAll(/[^a-zA-Z0-9-]/g, '-')
+	.toLowerCase()
+
+function run(command: string, args: string[]) {
+	const result = spawnSync(command, args, { cwd: root, stdio: 'inherit' })
+
+	if (result.error) throw result.error
+
+	if (result.status !== 0)
+		throw new Error(`${command} failed (${result.status})`)
+}
+
+run('vp', ['install'])
+
+run('pitchfork-register', [slug, '--daemon', 'dev', '--dir', root])
+
+run('pitchfork', ['start', 'dev'])

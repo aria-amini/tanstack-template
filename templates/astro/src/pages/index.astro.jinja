@@ -1,0 +1,16 @@
+---
+import Base from '../layouts/base.astro'
+{% if react -%}
+import { Counter } from '../components/counter'
+{% endif -%}
+---
+
+<Base title="{{ app_name }}" description="Built with Astro and Tailwind CSS.">
+	<main class="mx-auto max-w-5xl px-6 py-12">
+		<h1 class="text-4xl">{{ app_name }}</h1>
+		<p class="text-muted-foreground mt-4">Built with Astro and Tailwind CSS.</p>
+{%- if react %}
+		<Counter client:load />
+{%- endif %}
+	</main>
+</Base>

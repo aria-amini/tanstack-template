@@ -18,6 +18,13 @@ jobs:
       matrix:
         template: [tanstack]
         features: [false, true]
+        include:
+          - template: astro
+            features: false
+            astro_output: static
+          - template: astro
+            features: true
+            astro_output: node
     env:
       APP_ENV: test
     steps:
@@ -30,6 +37,8 @@ jobs:
           --vcs-ref="${{ github.sha }}" \
           -d template=${{ matrix.template }} \
           -d app_name=scaffold-check \
+          -d astro_output=${{ matrix.astro_output || 'static' }} \
+          -d react=${{ matrix.template == 'astro' && matrix.features || false }} \
           -d sentry=${{ matrix.features }} \
           -d sentry_org=scaffold-check \
           -d sentry_dsn=https://public@o0.ingest.us.sentry.io/0 \
@@ -59,6 +68,10 @@ jobs:
       - name: Validate the generated app
         working-directory: ${{ runner.temp }}/app
         run: |
-          vp check
+          vp run check
           vp test run
           vp run build
+      - name: Test the Astro page and islands
+        if: matrix.template == 'astro'
+        working-directory: ${{ runner.temp }}/app
+        run: vp run e2e
