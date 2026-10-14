@@ -36,9 +36,9 @@ The toolkit owns the framework plugins and their order: `tanstackStart`,
 that plugin. Set an object to merge options over the toolkit options. App
 plugins go in `config.plugins` and run after the toolkit plugins.
 
-The app installs each plugin package that it uses. `defineToolkit()` checks
-these packages first. If a package is missing, it throws an error with the
-`pnpm add -D` command. Set `shadcn: false` to remove the `@shadcn/lint` rules.
+The app installs each plugin package that it uses. If an enabled plugin's
+package is missing, `defineToolkit()` throws an error with the `pnpm add -D`
+command. Set `shadcn: false` to remove the `@shadcn/lint` rules.
 
 ## Building blocks
 

@@ -9,7 +9,7 @@ import type viteReact from '@vitejs/plugin-react'
 import type { nitro } from 'nitro/vite'
 import type { PluginOption, UserConfig } from 'vite-plus'
 
-import { assertPeers, type Peer } from '../peers.ts'
+import { importPeer, requirePeer, type Peer } from '../peers.ts'
 import { fmt } from '../vite-plus/fmt.ts'
 import { lint } from '../vite-plus/lint.ts'
 import { mergeToolkitConfig, type ToolkitConfig } from '../vite-plus/merge.ts'
@@ -46,36 +46,32 @@ export interface TanstackToolkitOptions {
 
 const entry = '@aamini/config/tanstack'
 
-const pluginPeers = {
-	tanstackStart: [
-		{
-			name: '@tanstack/react-start',
-			specifier: '@tanstack/react-start/plugin/vite',
-		},
-	],
-	devtools: [
-		{ name: '@tanstack/devtools-vite', specifier: '@tanstack/devtools-vite' },
-	],
-	nitro: [{ name: 'nitro', specifier: 'nitro/vite' }],
-	tailwindcss: [{ name: '@tailwindcss/vite', specifier: '@tailwindcss/vite' }],
-	react: [{ name: '@vitejs/plugin-react', specifier: '@vitejs/plugin-react' }],
-	reactCompiler: [
-		{ name: '@vitejs/plugin-react', specifier: '@vitejs/plugin-react' },
-		{ name: '@rolldown/plugin-babel', specifier: '@rolldown/plugin-babel' },
-		{
-			name: 'babel-plugin-react-compiler',
-			specifier: 'babel-plugin-react-compiler',
-		},
-	],
-	varlock: [
-		{
-			name: '@varlock/vite-integration',
-			specifier: '@varlock/vite-integration',
-		},
-	],
-} satisfies Record<keyof TanstackPlugins, Peer[]>
-
-const shadcnPeer = { name: '@shadcn/lint', specifier: '@shadcn/lint' }
+const peers = {
+	tanstackStart: {
+		name: '@tanstack/react-start',
+		specifier: '@tanstack/react-start/plugin/vite',
+	},
+	devtools: {
+		name: '@tanstack/devtools-vite',
+		specifier: '@tanstack/devtools-vite',
+	},
+	nitro: { name: 'nitro', specifier: 'nitro/vite' },
+	tailwindcss: { name: '@tailwindcss/vite', specifier: '@tailwindcss/vite' },
+	react: { name: '@vitejs/plugin-react', specifier: '@vitejs/plugin-react' },
+	babel: {
+		name: '@rolldown/plugin-babel',
+		specifier: '@rolldown/plugin-babel',
+	},
+	reactCompiler: {
+		name: 'babel-plugin-react-compiler',
+		specifier: 'babel-plugin-react-compiler',
+	},
+	varlock: {
+		name: '@varlock/vite-integration',
+		specifier: '@varlock/vite-integration',
+	},
+	shadcn: { name: '@shadcn/lint', specifier: '@shadcn/lint' },
+} satisfies Record<string, Peer>
 
 type PluginDefaults = Required<{
 	[K in keyof TanstackPlugins]: Exclude<TanstackPlugins[K], false | undefined>
@@ -168,7 +164,11 @@ async function tanstackPlugins(plugins: TanstackPlugins) {
 	)
 
 	if (startOptions) {
-		const { tanstackStart } = await import('@tanstack/react-start/plugin/vite')
+		const { tanstackStart } = await importPeer(
+			entry,
+			peers.tanstackStart,
+			() => import('@tanstack/react-start/plugin/vite'),
+		)
 
 		result.push(tanstackStart(startOptions))
 	}
@@ -179,7 +179,11 @@ async function tanstackPlugins(plugins: TanstackPlugins) {
 	)
 
 	if (devtoolsOptions && !underVitest) {
-		const { devtools } = await import('@tanstack/devtools-vite')
+		const { devtools } = await importPeer(
+			entry,
+			peers.devtools,
+			() => import('@tanstack/devtools-vite'),
+		)
 
 		result.push(devtools(devtoolsOptions))
 	}
@@ -187,7 +191,11 @@ async function tanstackPlugins(plugins: TanstackPlugins) {
 	const nitroOptions = pluginOptions(pluginDefaults.nitro, plugins.nitro)
 
 	if (nitroOptions && !underVitest) {
-		const { nitro } = await import('nitro/vite')
+		const { nitro } = await importPeer(
+			entry,
+			peers.nitro,
+			() => import('nitro/vite'),
+		)
 
 		result.push(nitro(nitroOptions))
 	}
@@ -198,7 +206,11 @@ async function tanstackPlugins(plugins: TanstackPlugins) {
 	)
 
 	if (tailwindOptions) {
-		const { default: tailwindcss } = await import('@tailwindcss/vite')
+		const { default: tailwindcss } = await importPeer(
+			entry,
+			peers.tailwindcss,
+			() => import('@tailwindcss/vite'),
+		)
 
 		result.push(tailwindcss(tailwindOptions))
 	}
@@ -206,7 +218,11 @@ async function tanstackPlugins(plugins: TanstackPlugins) {
 	const reactOptions = pluginOptions(pluginDefaults.react, plugins.react)
 
 	if (reactOptions) {
-		const { default: viteReact } = await import('@vitejs/plugin-react')
+		const { default: viteReact } = await importPeer(
+			entry,
+			peers.react,
+			() => import('@vitejs/plugin-react'),
+		)
 
 		result.push(viteReact(reactOptions))
 	}
@@ -217,8 +233,20 @@ async function tanstackPlugins(plugins: TanstackPlugins) {
 	)
 
 	if (compilerOptions) {
-		const { reactCompilerPreset } = await import('@vitejs/plugin-react')
-		const { default: babel } = await import('@rolldown/plugin-babel')
+		// Babel loads the compiler plugin by name, after this config resolves.
+		requirePeer(entry, peers.reactCompiler)
+
+		const { reactCompilerPreset } = await importPeer(
+			entry,
+			peers.react,
+			() => import('@vitejs/plugin-react'),
+		)
+
+		const { default: babel } = await importPeer(
+			entry,
+			peers.babel,
+			() => import('@rolldown/plugin-babel'),
+		)
 
 		result.push(babel({ presets: [reactCompilerPreset(compilerOptions)] }))
 	}
@@ -226,7 +254,11 @@ async function tanstackPlugins(plugins: TanstackPlugins) {
 	const varlockOptions = pluginOptions(pluginDefaults.varlock, plugins.varlock)
 
 	if (varlockOptions) {
-		const { varlockVitePlugin } = await import('@varlock/vite-integration')
+		const { varlockVitePlugin } = await importPeer(
+			entry,
+			peers.varlock,
+			() => import('@varlock/vite-integration'),
+		)
 
 		result.push(varlockVitePlugin(varlockOptions))
 	}
@@ -234,31 +266,15 @@ async function tanstackPlugins(plugins: TanstackPlugins) {
 	return result
 }
 
-function enabledPeers(options: TanstackToolkitOptions) {
-	const plugins = options.plugins ?? {}
-	const keys = Object.keys(pluginPeers).filter(isPluginKey)
-
-	const peers = keys.flatMap((key) =>
-		plugins[key] === false ? [] : pluginPeers[key],
-	)
-
-	if (options.shadcn !== false) peers.push(shadcnPeer)
-
-	return peers
-}
-
-function isPluginKey(key: string): key is keyof TanstackPlugins {
-	return Object.hasOwn(pluginPeers, key)
-}
-
 /** The complete Vite+ config for a TanStack Start app. */
 export async function defineToolkit(
 	options: TanstackToolkitOptions = {},
 ): Promise<UserConfig> {
-	assertPeers(entry, enabledPeers(options))
-
 	const root = options.root ?? process.cwd()
 	const shadcn = options.shadcn !== false
+
+	// Oxlint loads the shadcn rules by name when it lints.
+	if (shadcn) requirePeer(entry, peers.shadcn)
 
 	const preset: UserConfig = {
 		root,

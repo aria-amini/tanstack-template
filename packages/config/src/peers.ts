@@ -5,27 +5,8 @@ export interface Peer {
 	specifier: string
 }
 
-/**
- * Throws one error that names every peer package that the entry cannot
- * resolve, with the command that installs them.
- */
-export function assertPeers(entry: string, peers: readonly Peer[]) {
-	const missing = [
-		...new Set(
-			peers.flatMap((peer) => (canResolve(peer.specifier) ? [] : [peer.name])),
-		),
-	]
-
-	if (missing.length === 0) return
-
-	const list = missing.map((name) => `  - ${name}`).join('\n')
-
-	throw new Error(
-		`${entry} needs these packages:\n${list}\nInstall them with: pnpm add -D ${missing.join(' ')}`,
-	)
-}
-
-function canResolve(specifier: string) {
+/** Resolves from this package, so pnpm sees each declared peer. */
+export function canResolve(specifier: string) {
 	try {
 		import.meta.resolve(specifier)
 
@@ -33,4 +14,36 @@ function canResolve(specifier: string) {
 	} catch {
 		return false
 	}
+}
+
+function missingPeer(entry: string, peer: Peer, cause?: Error) {
+	return new Error(
+		`${entry} needs ${peer.name}. Install it with: pnpm add -D ${peer.name}`,
+		{ cause },
+	)
+}
+
+/**
+ * Imports a peer module. If the app did not install the peer, the error names
+ * the package and the command that installs it.
+ */
+export async function importPeer<T>(
+	entry: string,
+	peer: Peer,
+	load: () => Promise<T>,
+): Promise<T> {
+	try {
+		return await load()
+	} catch (error) {
+		if (error instanceof Error && !canResolve(peer.specifier)) {
+			throw missingPeer(entry, peer, error)
+		}
+
+		throw error
+	}
+}
+
+/** Checks a peer that another tool loads, for example a Babel or Oxlint plugin. */
+export function requirePeer(entry: string, peer: Peer) {
+	if (!canResolve(peer.specifier)) throw missingPeer(entry, peer)
 }

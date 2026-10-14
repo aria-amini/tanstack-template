@@ -1,29 +1,45 @@
 import { expect, test } from 'vite-plus/test'
 
-import { assertPeers } from './peers.ts'
+import { importPeer, requirePeer } from './peers.ts'
 
-test('passes when every peer resolves', () => {
+const entry = '@aamini/config/test'
+
+const missing = { name: 'not-installed', specifier: 'not-installed/vite' }
+
+test('importPeer returns the module of an installed peer', async () => {
+	const peer = { name: 'vite-plus', specifier: 'vite-plus' }
+
+	await expect(
+		importPeer(entry, peer, () => Promise.resolve('loaded')),
+	).resolves.toBe('loaded')
+})
+
+test('importPeer names a missing peer with the install command', async () => {
+	await expect(
+		importPeer(entry, missing, () =>
+			Promise.reject(new Error('Cannot find package')),
+		),
+	).rejects.toThrow(
+		'@aamini/config/test needs not-installed. Install it with: pnpm add -D not-installed',
+	)
+})
+
+test('importPeer keeps other errors from an installed peer', async () => {
+	const peer = { name: 'vite-plus', specifier: 'vite-plus' }
+
+	await expect(
+		importPeer(entry, peer, () => Promise.reject(new Error('plugin crashed'))),
+	).rejects.toThrow('plugin crashed')
+})
+
+test('requirePeer passes for an installed peer', () => {
 	expect(() =>
-		assertPeers('@aamini/config/test', [
-			{ name: 'vite-plus', specifier: 'vite-plus' },
-		]),
+		requirePeer(entry, { name: 'vite-plus', specifier: 'vite-plus' }),
 	).not.toThrow()
 })
 
-test('names each missing package once with the install command', () => {
-	expect(() =>
-		assertPeers('@aamini/config/test', [
-			{ name: 'vite-plus', specifier: 'vite-plus' },
-			{ name: 'not-installed-a', specifier: 'not-installed-a/vite' },
-			{ name: 'not-installed-a', specifier: 'not-installed-a' },
-			{ name: 'not-installed-b', specifier: 'not-installed-b' },
-		]),
-	).toThrow(
-		[
-			'@aamini/config/test needs these packages:',
-			'  - not-installed-a',
-			'  - not-installed-b',
-			'Install them with: pnpm add -D not-installed-a not-installed-b',
-		].join('\n'),
+test('requirePeer names a missing peer with the install command', () => {
+	expect(() => requirePeer(entry, missing)).toThrow(
+		'Install it with: pnpm add -D not-installed',
 	)
 })
