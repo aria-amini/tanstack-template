@@ -1,0 +1,10 @@
+allowBuilds:
+  esbuild: true
+  sharp: true
+# Matches the CI install policy, so local resolution never picks a release
+# that CI rejects.
+minimumReleaseAge: 1440
+# First-party packages publish only from the toolkit release workflow, after
+# its checks pass.
+minimumReleaseAgeExclude:
+  - '@aamini/*'

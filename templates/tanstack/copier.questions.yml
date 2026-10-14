@@ -17,7 +17,8 @@ app_name_snake:
 sentry:
   type: bool
   help: Error monitoring via @sentry/tanstackstart-react
-  default: true
+  default: "{{ template == 'tanstack' }}"
+  when: "{{ template == 'tanstack' }}"
 
 sentry_org:
   type: str
@@ -42,7 +43,8 @@ sentry_dsn:
 posthog:
   type: bool
   help: Product analytics via @posthog/react behind a /api/ingest proxy
-  default: true
+  default: "{{ template == 'tanstack' }}"
+  when: "{{ template == 'tanstack' }}"
 
 posthog_project_token:
   type: str
@@ -52,7 +54,8 @@ posthog_project_token:
 google_auth:
   type: bool
   help: Google OAuth sign-in alongside email/password
-  default: true
+  default: "{{ template == 'tanstack' }}"
+  when: "{{ template == 'tanstack' }}"
 
 google_client_id:
   type: str

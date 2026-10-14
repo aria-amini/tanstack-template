@@ -1,0 +1,21 @@
+import { defineConfig, devices } from '@playwright/test'
+
+const baseURL = process.env.BASE_URL || 'http://127.0.0.1:4322'
+
+export default defineConfig({
+	testDir: './e2e',
+	outputDir: '.playwright/test-results',
+	use: {
+		baseURL,
+		...devices['Desktop Chrome'],
+		channel: 'chromium',
+		launchOptions: { args: ['--headless=new'] },
+	},
+	webServer: process.env.BASE_URL
+		? []
+		: {
+				command: '{{ "vp run build && HOST=127.0.0.1 PORT=4322 vp run start" if astro_output == "node" else "vp run build && vp run preview --host 127.0.0.1 --port 4322" }}',
+				url: baseURL,
+				timeout: 120_000,
+			},
+})

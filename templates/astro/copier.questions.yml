@@ -1,0 +1,22 @@
+astro_output:
+  type: str
+  help: Astro hosting target
+  choices: [static, node]
+  default: static
+  when: "{{ template == 'astro' }}"
+
+react:
+  type: bool
+  help: React islands for interactive components
+  default: false
+  when: "{{ template == 'astro' }}"
+
+site_url:
+  type: str
+  help: Canonical production URL
+  default: https://example.com
+  when: "{{ template == 'astro' }}"
+  validator: >-
+    {% if not (site_url.startswith('https://') or site_url.startswith('http://')) %}
+    site_url must start with https:// or http://
+    {% endif %}

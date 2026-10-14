@@ -1,0 +1,8 @@
+#:schema https://pitchfork.jdx.dev/schema.json
+
+[daemons.dev]
+run = 'APP_PORT="$PORT" exec vp run dev'
+auto = ["start", "stop"]
+retry = 3
+port = { expect = [3000], bump = 10 }
+ready_cmd = { run = 'curl -fsS "http://127.0.0.1:$PORT/" > /dev/null', timeout = "30s" }

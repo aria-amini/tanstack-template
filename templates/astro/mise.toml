@@ -1,0 +1,10 @@
+[plugins]
+vite-plus = "https://github.com/markmals/mise-vite-plus"
+
+[tools]
+node = "24"
+vite-plus = "latest"
+
+[tasks.bootstrap]
+description = "Install dependencies and start the Astro dev server"
+run = "node scripts/bootstrap.ts"

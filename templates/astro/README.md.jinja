@@ -1,0 +1,36 @@
+# {{ app_name }}
+
+Astro + Tailwind CSS. The `react` answer enables React islands.
+
+Derived from `pc-tune-ups` through the Toolkit Astro template.
+
+## Development
+
+Run `mise run bootstrap` to install packages, register the checkout URL, and
+start Pitchfork. Use `vp run dev` to run Astro directly.
+
+Import the Bootstrap action from `t3.json` in T3 project Actions settings. Its
+`async: false` setting holds the agent until bootstrap exits in a new worktree.
+
+## Validation
+
+```sh
+vp run check
+vp test run
+vp run build
+vp run e2e
+```
+
+Vite+ checks TypeScript. Prettier formats Astro files. ESLint checks Astro
+markup. `astro check` validates templates and component props.
+
+## Production
+
+{% if astro_output == 'node' -%}
+Run `vp run build`, then `HOST=0.0.0.0 PORT=4321 vp run start`. The Node adapter
+serves `dist/client` and runs `dist/server/entry.mjs`.
+{%- else -%}
+Run `vp run build` and publish `dist/` to a static host.
+{%- endif %}
+
+Change the production URL in `astro.config.ts`.

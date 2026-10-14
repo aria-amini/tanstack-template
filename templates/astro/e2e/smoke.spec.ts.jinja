@@ -1,0 +1,15 @@
+import { expect, test } from '@playwright/test'
+
+const appName = '{{ app_name }}'
+
+test('serves the Astro page', async ({ page }) => {
+	const response = await page.goto('/')
+
+	expect(response?.status()).toBe(200)
+	await expect(page).toHaveTitle(appName)
+	await expect(page.getByRole('heading', { name: appName })).toBeVisible()
+{%- if react %}
+	await page.getByRole('button', { name: 'Count: 0' }).click()
+	await expect(page.getByRole('button', { name: 'Count: 1' })).toBeVisible()
+{%- endif %}
+})
