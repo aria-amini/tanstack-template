@@ -1,6 +1,6 @@
 {
 	"name": "@aamini/config",
-	"version": "0.0.20",
+	"version": "0.1.0",
 	"description": "Shared Vite+, lint, format, type, and test config for aria-amini apps",
 	"license": "MIT",
 	"type": "module",
