@@ -1,0 +1,20 @@
+{
+	"name": "toolkit",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"build": "vp run -r build",
+		"check": "vp check",
+		"test": "vp test run",
+		"changeset": "changeset",
+		"release": "vp run -r build && changeset publish"
+	},
+	"devDependencies": {
+		"@changesets/cli": "^3.0.3",
+		"@types/node": "^26.1.1",
+		"oxlint-plugin-eslint": "^1.87.0",
+		"typescript": "6.0.3",
+		"vite-plus": "catalog:"
+	},
+	"packageManager": "pnpm@12.8.1+sha512.f64ba907507f5ceafe06c8d38e6052d0179444580ec1279ddd5bfc11cb48aa8a2644b66598e07e761da84872a9fc57d5f902b87fa49d024198d558612aabbe45"
+}
