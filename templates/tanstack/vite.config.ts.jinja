@@ -1,9 +1,7 @@
 import { defineToolkit } from '@aamini/config/tanstack'
 {% if sentry -%}
 import { sentryTanstackStart } from '@sentry/tanstackstart-react/vite'
-{% endif -%}
-import { playwright } from 'vite-plus/test/browser-playwright'
-
+{% endif %}
 export default defineToolkit({
 	root: import.meta.dirname,
 	config: {
@@ -47,94 +45,6 @@ export default defineToolkit({
 					},
 				],
 			},
-		},
-		// Pre-bundle the browser test stack at startup; without this each dep is
-		// discovered lazily mid-run, and the re-optimization reload aborts
-		// whichever test file is loading.
-		optimizeDeps: {
-			include: [
-				'vite-plus/test',
-				'vite-plus/test/browser',
-				'vitest-browser-react',
-				'msw',
-				'msw/browser',
-			],
-		},
-		test: {
-			// Headless runs and screenshot baselines work with writes disabled.
-			// allowWrite exists for UI clients on the tailnet (snapshot/baseline
-			// updates from the browser UI); execution stays disabled.
-			api: { allowWrite: true, allowExec: false },
-			projects: [
-				{
-					extends: true,
-					test: {
-						name: 'unit',
-						include: [
-							'src/**/*.unit.test.ts',
-							'src/**/*.test.unit.ts',
-							'tests/**/*.unit.test.ts',
-						],
-					},
-				},
-				{
-					extends: true,
-					test: {
-						name: 'server',
-						include: ['src/**/*.server.test.ts', 'src/**/server.test.ts'],
-						testTimeout: 30_000,
-						fileParallelism: false,
-					},
-				},
-				{
-					extends: true,
-					test: {
-						name: 'browser',
-						// Docker network changes in server tests abort Chromium module requests.
-						sequence: { groupOrder: 1 },
-						include: ['src/**/*.test.tsx', 'tests/**/*.test.tsx'],
-						setupFiles: ['./src/styles.css'],
-						fileParallelism: false,
-						retry: 0,
-						testTimeout: 15_000,
-						browser: {
-							commands: {
-								async resetScreenshotPointer({ page }) {
-									await page.mouse.move(0, 0)
-								},
-								async resizeBrowserViewport(
-									{ page },
-									width: number,
-									height: number,
-								) {
-									await page.setViewportSize({ width, height })
-								},
-							},
-							instances: [
-								{
-									browser: 'chromium',
-									name: 'desktop',
-									viewport: { width: 1280, height: 720 },
-								},
-								{
-									browser: 'chromium',
-									name: 'mobile',
-									viewport: { width: 375, height: 812 },
-								},
-							],
-							provider: playwright({
-								launchOptions: {
-									channel: 'chromium',
-									args: ['--disable-lcd-text', '--headless=new'],
-								},
-								actionTimeout: 3_000,
-							}),
-							enabled: true,
-							headless: true,
-						},
-					},
-				},
-			],
 		},
 	},
 })

@@ -1,5 +1,14 @@
 packages:
   - packages/*
+# Build scripts of test fixture dependencies. The package and its tests need
+# none of them.
+allowBuilds:
+  # cpu-features is an optional pg dependency; its native build aborts the
+  # process on aarch64 (unfixable symbol error), and pg runs fine without it.
+  cpu-features: false
+  msw: false
+  protobufjs: false
+  ssh2: false
 catalog:
   '@vitest/browser-playwright': 5.0.3
   vite: npm:@voidzero-dev/vite-plus-core@1.1.0

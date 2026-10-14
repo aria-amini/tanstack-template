@@ -9,10 +9,18 @@ import type viteReact from '@vitejs/plugin-react'
 import type { nitro } from 'nitro/vite'
 import type { PluginOption, UserConfig } from 'vite-plus'
 
-import { importPeer, requirePeer, type Peer } from '../peers.ts'
+import { mergeOptions } from '../options.ts'
+import { canResolve, importPeer, requirePeer, type Peer } from '../peers.ts'
 import { fmt } from '../vite-plus/fmt.ts'
 import { lint } from '../vite-plus/lint.ts'
 import { mergeToolkitConfig, type ToolkitConfig } from '../vite-plus/merge.ts'
+import {
+	browserProject,
+	serverProject,
+	unitProject,
+	type ProjectOptions,
+} from '../vitest/index.ts'
+import { rootKey } from '../vitest/root.ts'
 
 // Any function type is assignable to this signature, whatever it returns.
 type Options<T extends (...args: never[]) => void> = NonNullable<
@@ -34,12 +42,21 @@ export interface TanstackPlugins {
 	varlock?: PluginSetting<Options<typeof varlockVitePlugin>>
 }
 
+/** `false` removes the project. An object merges over the toolkit options. */
+export interface TanstackTests {
+	unit?: false | ProjectOptions
+	server?: false | ProjectOptions
+	/** Vitest browser mode, `desktop` and `mobile` instances. */
+	browser?: false | ProjectOptions
+}
+
 export interface TanstackToolkitOptions {
 	/** The app root. Pass `import.meta.dirname` from `vite.config.ts`. */
 	root?: string
 	plugins?: TanstackPlugins
 	/** Adds the `@shadcn/lint` rules. */
 	shadcn?: boolean
+	tests?: TanstackTests
 	/** Vite+ config merged last. App plugins in `config.plugins` run after the toolkit plugins. */
 	config?: ToolkitConfig
 }
@@ -111,35 +128,6 @@ const shadcnLint = {
 		},
 	],
 } satisfies UserConfig['lint']
-
-function isPlainObject<T>(value: T): value is T & object {
-	return (
-		value !== null &&
-		value instanceof Object &&
-		Object.getPrototypeOf(value) === Object.prototype
-	)
-}
-
-/** Deep merges plugin options. Arrays and other values replace. */
-function mergeOptions<T extends object>(
-	defaults: T,
-	override: T | undefined,
-): T {
-	if (override === undefined) return defaults
-
-	const merged = { ...defaults, ...override }
-
-	for (const key in override) {
-		const preset = defaults[key]
-		const value = override[key]
-
-		if (isPlainObject(preset) && isPlainObject(value)) {
-			merged[key] = mergeOptions(preset, value)
-		}
-	}
-
-	return merged
-}
 
 function pluginOptions<T extends object>(
 	defaults: T,
@@ -266,12 +254,47 @@ async function tanstackPlugins(plugins: TanstackPlugins) {
 	return result
 }
 
+async function testProjects(tests: TanstackTests) {
+	const projects = []
+
+	if (tests.unit !== false) projects.push(unitProject(tests.unit))
+
+	if (tests.server !== false) projects.push(serverProject(tests.server))
+
+	if (tests.browser !== false) {
+		projects.push(
+			await browserProject(
+				mergeOptions<ProjectOptions>(
+					{ setupFiles: ['./src/styles.css'] },
+					tests.browser,
+				),
+			),
+		)
+	}
+
+	return projects
+}
+
+// Pre-bundles the browser test stack at startup. Without it, Vite discovers
+// each dependency mid-run, and the re-optimization reload aborts the test
+// file that is loading.
+function browserTestDeps() {
+	const deps = ['vite-plus/test', 'vite-plus/test/browser']
+
+	for (const optional of ['vitest-browser-react', 'msw', 'msw/browser']) {
+		if (canResolve(optional)) deps.push(optional)
+	}
+
+	return deps
+}
+
 /** The complete Vite+ config for a TanStack Start app. */
 export async function defineToolkit(
 	options: TanstackToolkitOptions = {},
 ): Promise<UserConfig> {
 	const root = options.root ?? process.cwd()
 	const shadcn = options.shadcn !== false
+	const tests = options.tests ?? {}
 
 	// Oxlint loads the shadcn rules by name when it lints.
 	if (shadcn) requirePeer(entry, peers.shadcn)
@@ -295,6 +318,19 @@ export async function defineToolkit(
 		plugins: await tanstackPlugins(options.plugins ?? {}),
 		fmt,
 		lint: lint('react'),
+		test: {
+			// Headless runs and screenshot baselines work with writes disabled.
+			// allowWrite serves UI clients on the tailnet, which update snapshots
+			// and baselines from the browser UI. Execution stays disabled.
+			api: { allowWrite: true, allowExec: false },
+			// Test fixtures resolve app paths against this root, not the cwd.
+			provide: { [rootKey]: root },
+			projects: await testProjects(tests),
+		},
+	}
+
+	if (tests.browser !== false) {
+		preset.optimizeDeps = { include: browserTestDeps() }
 	}
 
 	const withShadcn = shadcn

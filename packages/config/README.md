@@ -9,14 +9,20 @@ pnpm add -D @aamini/config vite-plus oxlint-plugin-eslint
 
 ## Entry points
 
-| Subpath                | Exports                                               |
-| ---------------------- | ----------------------------------------------------- |
-| `/tanstack`            | `defineToolkit()`: the complete TanStack Start config |
-| `/vite-plus`           | `fmt`, `lint(framework)`, `mergeToolkitConfig()`      |
-| `/anti-slop`           | Oxlint JS plugin. `lint()` registers it.              |
-| `/tsconfig/base.json`  | Strict compiler options                               |
-| `/tsconfig/react.json` | Base plus React JSX, DOM, and Vite client types       |
-| `/tsconfig/astro.json` | Base plus Astro client types                          |
+| Subpath                | Exports                                                |
+| ---------------------- | ------------------------------------------------------ |
+| `/tanstack`            | `defineToolkit()`: the complete TanStack Start config  |
+| `/vite-plus`           | `fmt`, `lint(framework)`, `mergeToolkitConfig()`       |
+| `/vitest`              | `unitProject()`, `serverProject()`, `browserProject()` |
+| `/vitest/browser`      | `expectScreenshot()`, `waitForPageIdle()`              |
+| `/vitest/react`        | `renderPage()`                                         |
+| `/vitest/server`       | `createServerTest()`: MSW server fixture               |
+| `/vitest/db`           | `createDbTest()`: Postgres testcontainer and Drizzle   |
+| `/playwright`          | `playwrightConfig()`                                   |
+| `/anti-slop`           | Oxlint JS plugin. `lint()` registers it.               |
+| `/tsconfig/base.json`  | Strict compiler options                                |
+| `/tsconfig/react.json` | Base plus React JSX, DOM, and Vite client types        |
+| `/tsconfig/astro.json` | Base plus Astro client types                           |
 
 ## TanStack Start
 
@@ -39,6 +45,46 @@ plugins go in `config.plugins` and run after the toolkit plugins.
 The app installs each plugin package that it uses. If an enabled plugin's
 package is missing, `defineToolkit()` throws an error with the `pnpm add -D`
 command. Set `shadcn: false` to remove the `@shadcn/lint` rules.
+
+### Tests
+
+`defineToolkit()` adds three Vitest projects: `unit`, `server`, and `browser`.
+Set `tests.<project>` to `false` to remove a project. Set an object to merge
+`test` options over the toolkit options. Arrays replace the toolkit values.
+
+```ts
+export default defineToolkit({
+	root: import.meta.dirname,
+	tests: {
+		server: { include: ['src/**/*.test.ts'] },
+		browser: { setupFiles: ['./src/app.css'] },
+	},
+})
+```
+
+The `browser` project runs Chromium in two instances: `desktop` (1280×720) and
+`mobile` (375×812). Visual tests compare at zero tolerance. A capture stops at
+the viewport, and `fullHeight` grows the viewport to the full target. Mobile
+baselines get a `-mobile` suffix.
+
+```tsx
+import { renderPage } from '@aamini/config/vitest/react'
+
+test('home', async () => {
+	const page = await renderPage(HomePage, { path: '/', wrapper: AppProviders })
+
+	await page.expectScreenshot('home')
+	await page.expectScreenshot('home-full', { fullHeight: true })
+})
+```
+
+Playwright runs smoke tests only, against any `BASE_URL`:
+
+```ts
+import { playwrightConfig } from '@aamini/config/playwright'
+
+export default playwrightConfig({ testDir: './e2e' })
+```
 
 ## Building blocks
 
