@@ -1,0 +1,33 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency: release-${{ github.ref }}
+
+# npm trusted publishing: npmjs.com lists this repo and this workflow file as
+# the trusted publisher of @aamini/config, so publish needs no npm token.
+permissions:
+  contents: write
+  id-token: write
+  pull-requests: write
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: voidzero-dev/setup-vp@v1
+        with:
+          version: '1.1.0'
+          node-version-file: .node-version
+          cache: true
+      - uses: changesets/action@v2
+        with:
+          publish-script: vp run release
+          commit-message: Version packages
+          pr-title: Version packages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
