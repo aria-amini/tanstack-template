@@ -1,20 +1,22 @@
-name: Template CI
+name: Templates
 
 on:
   push:
   pull_request:
 
 concurrency:
-  group: template-ci-${{ github.event.pull_request.number || github.ref }}
+  group: templates-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
-  scaffold:
+  render:
+    name: render (${{ matrix.template }}, features=${{ matrix.features }})
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
+        template: [tanstack]
         features: [false, true]
     env:
       APP_ENV: test
@@ -26,6 +28,7 @@ jobs:
           uvx --from copier==9.18.2 copier copy \
           --trust --skip-tasks --defaults --quiet \
           --vcs-ref="${{ github.sha }}" \
+          -d template=${{ matrix.template }} \
           -d app_name=scaffold-check \
           -d sentry=${{ matrix.features }} \
           -d sentry_org=scaffold-check \
