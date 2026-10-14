@@ -73,6 +73,12 @@ describe('defineToolkit', () => {
 		])
 	})
 
+	test('provides the app root to test fixtures', async () => {
+		const config = await defineToolkit({ root: '/app' })
+
+		expect(config.test?.provide).toEqual({ aaminiToolkitRoot: '/app' })
+	})
+
 	test('adds the shadcn rules unless the app turns them off', async () => {
 		const withShadcn = await defineToolkit()
 		const withoutShadcn = await defineToolkit({ shadcn: false })

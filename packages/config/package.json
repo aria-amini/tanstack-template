@@ -31,6 +31,30 @@
 			"types": "./dist/anti-slop/index.d.mts",
 			"default": "./dist/anti-slop/index.mjs"
 		},
+		"./vitest": {
+			"types": "./dist/vitest/index.d.mts",
+			"default": "./dist/vitest/index.mjs"
+		},
+		"./vitest/browser": {
+			"types": "./dist/vitest/browser.d.mts",
+			"default": "./dist/vitest/browser.mjs"
+		},
+		"./vitest/react": {
+			"types": "./dist/vitest/react.d.mts",
+			"default": "./dist/vitest/react.mjs"
+		},
+		"./vitest/server": {
+			"types": "./dist/vitest/server.d.mts",
+			"default": "./dist/vitest/server.mjs"
+		},
+		"./vitest/db": {
+			"types": "./dist/vitest/db.d.mts",
+			"default": "./dist/vitest/db.mjs"
+		},
+		"./playwright": {
+			"types": "./dist/playwright.d.mts",
+			"default": "./dist/playwright.mjs"
+		},
 		"./tsconfig/*.json": "./tsconfig/*.json",
 		"./package.json": "./package.json"
 	},
@@ -38,19 +62,30 @@
 		"build": "vp pack"
 	},
 	"peerDependencies": {
+		"@playwright/test": "^1.61.0",
 		"@rolldown/plugin-babel": "^0.2.4",
 		"@shadcn/lint": "^0.2.1",
 		"@tailwindcss/vite": "^4.3.3",
 		"@tanstack/devtools-vite": "^0.8.0",
 		"@tanstack/react-start": "^1.168.0",
+		"@testcontainers/postgresql": "^12.0.3",
 		"@varlock/vite-integration": "^1.5.3",
 		"@vitejs/plugin-react": "^6.1.2",
+		"@vitest/browser-playwright": "^5.0.3",
 		"babel-plugin-react-compiler": "^1.0.0",
+		"drizzle-orm": "^1.0.0-rc.4",
+		"msw": "^2.14.6",
 		"nitro": "^3.0.260610-beta",
 		"oxlint-plugin-eslint": "^1.73.0",
-		"vite-plus": "^1.1.0"
+		"pg": "^8.22.0",
+		"react": "^19.2.0",
+		"vite-plus": "^1.1.0",
+		"vitest-browser-react": "^2.2.0"
 	},
 	"peerDependenciesMeta": {
+		"@playwright/test": {
+			"optional": true
+		},
 		"@rolldown/plugin-babel": {
 			"optional": true
 		},
@@ -66,13 +101,25 @@
 		"@tanstack/react-start": {
 			"optional": true
 		},
+		"@testcontainers/postgresql": {
+			"optional": true
+		},
 		"@varlock/vite-integration": {
 			"optional": true
 		},
 		"@vitejs/plugin-react": {
 			"optional": true
 		},
+		"@vitest/browser-playwright": {
+			"optional": true
+		},
 		"babel-plugin-react-compiler": {
+			"optional": true
+		},
+		"drizzle-orm": {
+			"optional": true
+		},
+		"msw": {
 			"optional": true
 		},
 		"nitro": {
@@ -80,24 +127,44 @@
 		},
 		"oxlint-plugin-eslint": {
 			"optional": true
+		},
+		"pg": {
+			"optional": true
+		},
+		"react": {
+			"optional": true
+		},
+		"vitest-browser-react": {
+			"optional": true
 		}
 	},
 	"devDependencies": {
+		"@playwright/test": "^1.64.0",
 		"@rolldown/plugin-babel": "^0.2.4",
 		"@shadcn/lint": "^0.2.1",
 		"@tailwindcss/vite": "^4.3.3",
 		"@tanstack/devtools-vite": "0.8.0",
 		"@tanstack/react-start": "1.168.32",
+		"@testcontainers/postgresql": "^12.2.0",
 		"@types/node": "^26.1.1",
+		"@types/pg": "^8.23.1",
+		"@types/react": "^19.3.0",
 		"@varlock/vite-integration": "^1.5.3",
 		"@vitejs/plugin-react": "^6.1.2",
+		"@vitest/browser-playwright": "catalog:",
 		"babel-plugin-react-compiler": "^1.0.0",
+		"drizzle-orm": "1.0.0-rc.4",
+		"msw": "^2.15.0",
 		"nitro": "3.0.260610-beta",
+		"pg": "^8.23.1",
 		"react": "^19.3.0",
 		"react-dom": "^19.3.0",
 		"tailwindcss": "^4.3.3",
+		"testcontainers": "^12.2.0",
 		"typescript": "6.0.3",
 		"varlock": "^1.22.0",
-		"vite-plus": "catalog:"
+		"vite-plus": "catalog:",
+		"vitest": "catalog:",
+		"vitest-browser-react": "^2.3.0"
 	}
 }
