@@ -6,4 +6,4 @@ setup = "mise run bootstrap"
 [[layout.tabs]]
 name = "dev"
 left = "pitchfork tui"
-right = "vp run dev"
+right = "pitchfork logs dev --tail"

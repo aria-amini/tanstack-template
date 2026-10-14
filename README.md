@@ -8,9 +8,7 @@ Shared app tooling for aria-amini projects: the Copier app templates and the
 | Template   | Contents                                                                                    |
 | ---------- | ------------------------------------------------------------------------------------------- |
 | `tanstack` | TanStack Start, Better Auth with optional Google OAuth, Sentry, PostHog, Drizzle, Pitchfork |
-
-| `astro` | Astro, Tailwind CSS, static or Node hosting, optional React islands,
-Varlock, Pitchfork |
+| `astro`    | Astro, Tailwind CSS, static or Node hosting, optional React islands, Varlock, Pitchfork     |
 
 Scaffold an app:
 
