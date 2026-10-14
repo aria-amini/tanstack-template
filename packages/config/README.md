@@ -1,6 +1,7 @@
 # @aamini/config
 
-Shared Vite+ format, lint, and TypeScript config for aria-amini apps.
+Shared Vite+ config for aria-amini apps: framework plugins, format, lint, and
+TypeScript.
 
 ```bash
 pnpm add -D @aamini/config vite-plus oxlint-plugin-eslint
@@ -8,15 +9,38 @@ pnpm add -D @aamini/config vite-plus oxlint-plugin-eslint
 
 ## Entry points
 
-| Subpath                | Exports                                          |
-| ---------------------- | ------------------------------------------------ |
-| `/vite-plus`           | `fmt`, `lint(framework)`, `mergeToolkitConfig()` |
-| `/anti-slop`           | Oxlint JS plugin. `lint()` registers it.         |
-| `/tsconfig/base.json`  | Strict compiler options                          |
-| `/tsconfig/react.json` | Base plus React JSX, DOM, and Vite client types  |
-| `/tsconfig/astro.json` | Base plus Astro client types                     |
+| Subpath                | Exports                                               |
+| ---------------------- | ----------------------------------------------------- |
+| `/tanstack`            | `defineToolkit()`: the complete TanStack Start config |
+| `/vite-plus`           | `fmt`, `lint(framework)`, `mergeToolkitConfig()`      |
+| `/anti-slop`           | Oxlint JS plugin. `lint()` registers it.              |
+| `/tsconfig/base.json`  | Strict compiler options                               |
+| `/tsconfig/react.json` | Base plus React JSX, DOM, and Vite client types       |
+| `/tsconfig/astro.json` | Base plus Astro client types                          |
 
-## Usage
+## TanStack Start
+
+```ts
+import { defineToolkit } from '@aamini/config/tanstack'
+
+export default defineToolkit({
+	root: import.meta.dirname,
+	plugins: { devtools: false, nitro: { preset: 'node-server' } },
+	config: { server: { port: 4000 } },
+})
+```
+
+The toolkit owns the framework plugins and their order: `tanstackStart`,
+`devtools`, `nitro`, `tailwindcss`, `react`, `reactCompiler`, and `varlock`.
+`devtools` and `nitro` do not run under Vitest. Set a key to `false` to remove
+that plugin. Set an object to merge options over the toolkit options. App
+plugins go in `config.plugins` and run after the toolkit plugins.
+
+The app installs each plugin package that it uses. If an enabled plugin's
+package is missing, `defineToolkit()` throws an error with the `pnpm add -D`
+command. Set `shadcn: false` to remove the `@shadcn/lint` rules.
+
+## Building blocks
 
 ```ts
 import { fmt, lint, mergeToolkitConfig } from '@aamini/config/vite-plus'

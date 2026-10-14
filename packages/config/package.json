@@ -19,6 +19,10 @@
 		"tsconfig"
 	],
 	"exports": {
+		"./tanstack": {
+			"types": "./dist/tanstack/index.d.mts",
+			"default": "./dist/tanstack/index.mjs"
+		},
 		"./vite-plus": {
 			"types": "./dist/vite-plus/index.d.mts",
 			"default": "./dist/vite-plus/index.mjs"
@@ -34,17 +38,66 @@
 		"build": "vp pack"
 	},
 	"peerDependencies": {
+		"@rolldown/plugin-babel": "^0.2.4",
+		"@shadcn/lint": "^0.2.1",
+		"@tailwindcss/vite": "^4.3.3",
+		"@tanstack/devtools-vite": "^0.8.0",
+		"@tanstack/react-start": "^1.168.0",
+		"@varlock/vite-integration": "^1.5.3",
+		"@vitejs/plugin-react": "^6.1.2",
+		"babel-plugin-react-compiler": "^1.0.0",
+		"nitro": "^3.0.260610-beta",
 		"oxlint-plugin-eslint": "^1.73.0",
 		"vite-plus": "^1.1.0"
 	},
 	"peerDependenciesMeta": {
+		"@rolldown/plugin-babel": {
+			"optional": true
+		},
+		"@shadcn/lint": {
+			"optional": true
+		},
+		"@tailwindcss/vite": {
+			"optional": true
+		},
+		"@tanstack/devtools-vite": {
+			"optional": true
+		},
+		"@tanstack/react-start": {
+			"optional": true
+		},
+		"@varlock/vite-integration": {
+			"optional": true
+		},
+		"@vitejs/plugin-react": {
+			"optional": true
+		},
+		"babel-plugin-react-compiler": {
+			"optional": true
+		},
+		"nitro": {
+			"optional": true
+		},
 		"oxlint-plugin-eslint": {
 			"optional": true
 		}
 	},
 	"devDependencies": {
+		"@rolldown/plugin-babel": "^0.2.4",
+		"@shadcn/lint": "^0.2.1",
+		"@tailwindcss/vite": "^4.3.3",
+		"@tanstack/devtools-vite": "0.8.0",
+		"@tanstack/react-start": "1.168.32",
 		"@types/node": "^26.1.1",
+		"@varlock/vite-integration": "^1.5.3",
+		"@vitejs/plugin-react": "^6.1.2",
+		"babel-plugin-react-compiler": "^1.0.0",
+		"nitro": "3.0.260610-beta",
+		"react": "^19.3.0",
+		"react-dom": "^19.3.0",
+		"tailwindcss": "^4.3.3",
 		"typescript": "6.0.3",
+		"varlock": "^1.22.0",
 		"vite-plus": "catalog:"
 	}
 }

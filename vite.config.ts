@@ -13,6 +13,7 @@ export default defineConfig(
 			fmt: {
 				ignorePatterns: [
 					'templates/**',
+					'packages/*/CHANGELOG.md',
 					'packages/config/src/anti-slop/**',
 					'.changeset/*.md',
 				],
