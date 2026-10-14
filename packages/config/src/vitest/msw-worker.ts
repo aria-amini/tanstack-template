@@ -17,10 +17,18 @@ export function mswWorker(): Plugin {
 		name: 'aamini:msw-worker',
 		configureServer(server) {
 			server.middlewares.use('/mockServiceWorker.js', (_request, response) => {
-				void readFile(workerPath).then((script) => {
-					response.setHeader('Content-Type', 'text/javascript')
-					response.end(script)
-				})
+				void readFile(workerPath)
+					.then((script) => {
+						response.setHeader('Content-Type', 'text/javascript')
+						response.end(script)
+					})
+					.catch((error) => {
+						server.config.logger.error(
+							`Failed to serve mockServiceWorker.js: ${error instanceof Error ? error.message : String(error)}`,
+						)
+						response.statusCode = 500
+						response.end()
+					})
 			})
 		},
 	}
