@@ -44,9 +44,15 @@ jobs:
           node-version-file: .node-version
           working-directory: ${{ runner.temp }}/app
           run-install: false
+      # Rendered apps test against this commit's @aamini/config, not npm.
+      - name: Pack @aamini/config
+        run: |
+          vp install
+          vp run build
+          pnpm --dir packages/config pack --out "$RUNNER_TEMP/aamini-config.tgz"
       - name: Install dependencies
         working-directory: ${{ runner.temp }}/app
-        run: vp install --no-frozen-lockfile
+        run: vp add -D "@aamini/config@file:$RUNNER_TEMP/aamini-config.tgz"
       - name: Install Chromium
         working-directory: ${{ runner.temp }}/app
         run: vp exec playwright install chromium --with-deps --no-shell

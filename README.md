@@ -5,8 +5,8 @@ Shared app tooling for aria-amini projects: the Copier app templates and the
 
 ## Templates
 
-| Template   | Contents                                                                                   |
-| ---------- | ------------------------------------------------------------------------------------------ |
+| Template   | Contents                                                                                    |
+| ---------- | ------------------------------------------------------------------------------------------- |
 | `tanstack` | TanStack Start, Better Auth with optional Google OAuth, Sentry, PostHog, Drizzle, Pitchfork |
 
 Scaffold an app:
@@ -31,5 +31,5 @@ mise run bootstrap
 ```
 
 Bootstrap installs dependencies, configures the workspace, removes orphaned
-Docker resources, migrates the database, and starts the app. Add `--verbose`
-for direct command output. Task code lives under `mise-tasks/`.
+Docker resources, migrates the database, and starts the app. Add `--verbose` for
+direct command output. Task code lives under `mise-tasks/`.
