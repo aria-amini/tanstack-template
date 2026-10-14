@@ -1,5 +1,16 @@
 # @aamini/config
 
+## 0.2.0
+
+### Minor Changes
+
+- d239eb2: Add `@aamini/config/tanstack`. Its `defineToolkit()` returns the complete
+  TanStack Start config, with the framework plugins in a fixed order.
+- 250407b: Add the test entries: `/vitest` project builders, `/vitest/browser` screenshot
+  helpers, `/vitest/react` `renderPage()`, `/vitest/server` and `/vitest/db`
+  fixtures, and `/playwright`. The TanStack `defineToolkit()` adds the `unit`,
+  `server`, and `browser` projects.
+
 ## 0.1.0
 
 ### Minor Changes
