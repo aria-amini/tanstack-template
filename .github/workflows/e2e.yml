@@ -62,7 +62,7 @@ jobs:
       - name: setup vite+
         uses: voidzero-dev/setup-vp@v1
         with:
-          version: '0.3.3'
+          version: '1.1.0'
           node-version: '24'
       - name: Install Playwright Browsers
         run: vp exec playwright install chromium --with-deps --no-shell
