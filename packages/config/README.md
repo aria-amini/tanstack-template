@@ -63,8 +63,9 @@ export default defineToolkit({
 ```
 
 The `browser` project runs Chromium in two instances: `desktop` (1280×720) and
-`mobile` (375×812). Visual tests compare at zero tolerance. Mobile baselines get
-a `-mobile` suffix.
+`mobile` (375×812). Visual tests compare at zero tolerance. A capture stops at
+the viewport, and `fullHeight` grows the viewport to the full target. Mobile
+baselines get a `-mobile` suffix.
 
 ```tsx
 import { renderPage } from '@aamini/config/vitest/react'

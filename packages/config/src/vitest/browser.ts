@@ -55,9 +55,41 @@ async function growToFullHeight(element: Element) {
 	}
 }
 
+// Vitest renders tests in an iframe that paints only the viewport, so a
+// capture past it comes out white. Playwright captures the page pixels under
+// an element, so a transparent fixed frame clips the capture to the viewport.
+function viewportClip(element: Element) {
+	const rect = element.getBoundingClientRect()
+
+	if (
+		rect.top >= 0 &&
+		rect.left >= 0 &&
+		rect.bottom <= window.innerHeight &&
+		rect.right <= window.innerWidth
+	) {
+		return undefined
+	}
+
+	const top = Math.max(rect.top, 0)
+	const left = Math.max(rect.left, 0)
+	const frame = document.createElement('div')
+
+	Object.assign(frame.style, {
+		position: 'fixed',
+		top: `${top}px`,
+		left: `${left}px`,
+		width: `${Math.min(rect.right, window.innerWidth) - left}px`,
+		height: `${Math.min(rect.bottom, window.innerHeight) - top}px`,
+		pointerEvents: 'none',
+	})
+
+	return document.body.appendChild(frame)
+}
+
 /**
- * Compares the target with its baseline at zero tolerance. Each browser
- * instance pins its own viewport. Mobile baselines get a `-mobile` suffix.
+ * Compares the target with its baseline at zero tolerance. The capture stops
+ * at the viewport unless `fullHeight` is set. Each browser instance pins its
+ * own viewport. Mobile baselines get a `-mobile` suffix.
  */
 export async function expectScreenshot(
 	target: Locator | HTMLElement,
@@ -67,6 +99,7 @@ export async function expectScreenshot(
 	const element = targetElement(target)
 	const suffix = window.innerWidth < mobileWidth ? '-mobile' : ''
 	const viewport = { width: window.innerWidth, height: window.innerHeight }
+	let clip: HTMLElement | undefined
 
 	try {
 		if (options.fullHeight) await growToFullHeight(element)
@@ -80,18 +113,25 @@ export async function expectScreenshot(
 			.toBe(true)
 		await server.commands.resetScreenshotPointer()
 		await waitForPageIdle()
-		await expect.element(element).toMatchScreenshot(`${name}${suffix}.png`, {
-			screenshotOptions: {
-				animations: 'disabled',
-				caret: 'hide',
-				scale: 'css',
-			},
-			comparatorOptions: {
-				allowedMismatchedPixelRatio: 0,
-				allowedMismatchedPixels: 0,
-			},
-		})
+
+		if (!options.fullHeight) clip = viewportClip(element)
+
+		await expect
+			.element(clip ?? element)
+			.toMatchScreenshot(`${name}${suffix}.png`, {
+				screenshotOptions: {
+					animations: 'disabled',
+					caret: 'hide',
+					scale: 'css',
+				},
+				comparatorOptions: {
+					allowedMismatchedPixelRatio: 0,
+					allowedMismatchedPixels: 0,
+				},
+			})
 	} finally {
+		clip?.remove()
+
 		if (options.fullHeight)
 			await resizeViewport(viewport.width, viewport.height)
 	}
