@@ -17,6 +17,7 @@ concurrency:
 
 # npm trusted publishing: npmjs.com lists this repo and this workflow file as
 # the trusted publisher of @aamini/config, so publish needs no npm token.
+# Renaming this file breaks publishing until npmjs.com is updated to match.
 permissions:
   actions: read
   contents: write
