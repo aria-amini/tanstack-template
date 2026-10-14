@@ -3,6 +3,7 @@ import { defineConfig } from 'vite-plus'
 export default defineConfig({
 	pack: {
 		entry: {
+			'tanstack/index': 'src/tanstack/index.ts',
 			'vite-plus/index': 'src/vite-plus/index.ts',
 			'anti-slop/index': 'src/anti-slop/index.ts',
 		},
